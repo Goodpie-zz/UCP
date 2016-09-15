@@ -1,6 +1,5 @@
 #include <stdio.h>
-
-void displayCorrectUsage();
+#include "main.h"
 
 int main(int argc, char* argv[])
 {
@@ -19,7 +18,7 @@ int main(int argc, char* argv[])
 	}
 	else
 	{
-		/* Correct number of arguments. Store arguments */
+		/* Correct number of arguments. Check if valid arguments */
 		if (*argv[1] == 'i')
 		{
 			inFlag = 1;
@@ -42,21 +41,23 @@ int main(int argc, char* argv[])
 			outFile = argv[4];
 		}
 
-		/* Hanlde the error detection with the flags */
-		if (inFlag == 0)
+		/* Handel the error detection with the flags */
+		if (inFlag == 1 && outFlag == 1)
 		{
-			printf("No input file argument detected\n");
-			displayCorrectUsage();
+			printf("In File: %s\nOut File: %s\n", inFile, outFile);
 		}
-		if (outFlag == 0)
+		else 
 		{
-			printf("No outfile file argument detected\n");
+			/* Display error message for each invalid argument */
+			if (inFlag == 0)
+			{
+				printf("No in file argument was found\n");
+			}
+			if (outFlag == 0)
+			{
+				printf("No out file argument was found\n");
+			}
 			displayCorrectUsage();
-		}
-
-		if (outFlag == 1 && inFlag == 1)
-		{
-			printf("%s, %s\n", inFile, outFile);
 		}
 
 	}
@@ -64,5 +65,5 @@ int main(int argc, char* argv[])
 
 void displayCorrectUsage()
 {
-	printf("Correct Usage:\nsortingAssignment i inFile o outfile\n");
+	printf("Correct Usage:\n\t$ sortingAssignment i inFile o outfile\n");
 }
