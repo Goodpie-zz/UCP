@@ -7,9 +7,12 @@ int main(int argc, char* argv[])
 	int inFlag, outFlag;
 	char* inFile;
 	char* outFile;
+	LinkedList* linkedList;
+	int testValue;
 
 	inFlag = 0;
 	outFlag = 0;
+	testValue = 10;
 
 	if (argc != 5)
 	{
@@ -61,9 +64,13 @@ int main(int argc, char* argv[])
 			displayCorrectUsage();
 		}
 	}
+
+
+	linkedList = createLinkedList(&testValue);
+	insertFirst(linkedList, &testValue);
+	deleteList(linkedList);
 	
-	
-		
+	return 0;		
 }
 
 void displayCorrectUsage()

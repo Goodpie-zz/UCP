@@ -9,10 +9,12 @@ typedef struct {
 	Node* tail;
 } LinkedList;
 
+LinkedList* createLinkedList(void*);
+
 void insertFirst(LinkedList*, void*);
 void insertLast(LinkedList*, void*);
 
-void* peekFIrst(LinkedList*);
+void* peekFirst(LinkedList*);
 void peekLast(LinkedList*);
 
 void deleteList(LinkedList*);
