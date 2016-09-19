@@ -1,6 +1,9 @@
 ## Files Submitted
 
 	- main.c - Controls the main operation of the program
+	- main.h - Contains function decleratiosn for main.c
+	- LinkedList.c - Handles linked list functionality
+	- LinkedList.h - Handles structs and functionality for LinkedList.c
 
 ## How much of the assignment has been attempted
 
