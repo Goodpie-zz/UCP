@@ -1,3 +1,4 @@
+#include <stdlib.h>
 #include "LinkedList.h"
 
 void insertFirst(LinkedList* list, void* value)
@@ -28,14 +29,14 @@ void insertLast(LinkedList* list, void* value)
 	}
 
 	/* Now inset a new node to the end of the linked list */
-	newNode = (Node*) malloc(sizeof(node));
+	newNode = (Node*) malloc(sizeof(Node));
 	(*newNode).next = NULL;
 	(*newNode).value = value;	
 	(*current).next = newNode;
 	
 }
 
-void* peakFirst(Linkedlist* list)
+void* peakFirst(LinkedList* list)
 {
 	Node* head = (*list).head;
 	return (*head).value;
@@ -63,7 +64,7 @@ void deleteList(LinkedList* list)
 		Node* tmp = current;
 		current = (*tmp).next;
 		
-		// Free the tmp
+		/* Free the tmp */
 		free((*tmp).value);
 		free(tmp);
 	}
