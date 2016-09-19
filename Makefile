@@ -23,4 +23,4 @@ clean:
 	rm -f $(OBJ)
 	
 very-clean:
-	rm -f $(OBJ) $(EXEC)
+	rm -f $(OBJ) $(EXEC) $(DEBUG_EXEC)
