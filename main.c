@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include "main.h"
+#include "LinkedList.h"
 
 int main(int argc, char* argv[])
 {
@@ -41,7 +42,7 @@ int main(int argc, char* argv[])
 			outFile = argv[4];
 		}
 
-		/* Handel the error detection with the flags */
+		/* Handle the error detection with the flags */
 		if (inFlag == 1 && outFlag == 1)
 		{
 			printf("In File: %s\nOut File: %s\n", inFile, outFile);
@@ -59,8 +60,10 @@ int main(int argc, char* argv[])
 			}
 			displayCorrectUsage();
 		}
-
 	}
+	
+	
+		
 }
 
 void displayCorrectUsage()

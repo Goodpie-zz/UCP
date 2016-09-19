@@ -22,7 +22,7 @@ void insertLast(LinkedList* list, void* value)
 	current = (*list).head;
 
 	/* Traverse the list until we get to the last node */
-	while (current != NULL)
+	while ((*current).next != NULL)
 	{
 		current = (*current).next;
 	}
@@ -32,6 +32,42 @@ void insertLast(LinkedList* list, void* value)
 	(*newNode).next = NULL;
 	(*newNode).value = value;	
 	(*current).next = newNode;
+	
 }
 
+void* peakFirst(Linkedlist* list)
+{
+	Node* head = (*list).head;
+	return (*head).value;
+}
+
+void* peakLast(LinkedList* list)
+{
+	Node* current = (*list).head;
+
+	/* Traverse until we find the last element in list */
+	while ((*current).next != NULL)
+	{
+		current = (*current).next;
+	}
+
+	/* Return last value in the list */
+	return (*current).value;
+}
+
+void deleteList(LinkedList* list)
+{
+	Node* current = (*list).head;
+	while ((*current).next == NULL)
+	{
+		Node* tmp = current;
+		current = (*tmp).next;
+		
+		// Free the tmp
+		free((*tmp).value);
+		free(tmp);
+	}
+	
+	free(current);
+}
 
