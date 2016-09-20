@@ -7,13 +7,13 @@ LinkedList* createLinkedList(void* value)
 	LinkedList* list;
 
 	newNode = (Node*) malloc(sizeof(Node));
-	(*newNode).value = value;
-	(*newNode).next = NULL;
+	newNode->value = value;
+	newNode->next = NULL;
 
 	list = (LinkedList*) malloc(sizeof(LinkedList));
-	(*list).head = newNode;
-	(*list).tail = newNode;
-	(*list).size = 1;
+	list->head = newNode;
+	list->tail = newNode;
+	list->size = 1;
 
 	return list;
 	 
