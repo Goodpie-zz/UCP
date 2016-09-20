@@ -66,7 +66,7 @@ int main(int argc, char* argv[])
 	}
 
 
-	linkedList = createLinkedList(&testValue);
+	linkedList = createLinkedList();
 	insertFirst(linkedList, &testValue);
 	insertLast(linkedList, &testValue);
 	removeLast(linkedList);

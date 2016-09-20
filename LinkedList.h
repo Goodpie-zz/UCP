@@ -10,15 +10,17 @@ typedef struct {
 	int size;
 } LinkedList;
 
-LinkedList* createLinkedList(void*);
+LinkedList* createLinkedList();
 
 void insertFirst(LinkedList*, void*);
 void insertLast(LinkedList*, void*);
 
 void* peekFirst(LinkedList*);
-void peekLast(LinkedList*);
+void* peekLast(LinkedList*);
 
-void* removeLast(LinkedList*);
-void* removeFirst(LinkedList*);
+void removeLast(LinkedList*);
+void removeFirst(LinkedList*);
 
 void deleteList(LinkedList*);
+
+int listIsEmpty(LinkedList*); 

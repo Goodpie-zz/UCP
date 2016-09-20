@@ -1,146 +1,135 @@
 #include <stdlib.h>
 #include "LinkedList.h"
 
-LinkedList* createLinkedList(void* value)
+LinkedList* createLinkedList()
 {
-	Node* newNode;
-	LinkedList* list;
+	LinkedList* linkedList;
 
-	newNode = (Node*) malloc(sizeof(Node));
-	newNode->value = value;
-	newNode->next = NULL;
-	newNode->prev = NULL; /* Head will always have prev of NULL */
+	/* Assign memory to LinkedList */
+	linkedList = (LinkedList*) malloc(sizeof(LinkedList));
+	
+	/* Assign default LinkedList Attributes */
+	linkedList->head = NULL;
+	linkedList->tail = NULL;
+	linkedList->size = 0;
 
-	list = (LinkedList*) malloc(sizeof(LinkedList));
-	list->head = newNode;
-	list->tail = newNode;
-	list->size = 1;
-
-	return list;
+	return linkedList;
 }
 
-void insertFirst(LinkedList* list, void* value)
+void insertFirst(LinkedList* linkedList, void* value)
 {
-	Node* newNode;
+	Node* node;
 
-	/* Create the new node and store the head in a temp variable */ 
-	newNode = (Node*) malloc(sizeof(Node));
-	
-	newNode->next = list->head;
-	newNode->prev = NULL;
-	newNode->value = value;
+	/* Assign memory to a new Node */
+	node = (Node*) malloc(sizeof(Node));
 
-	/* Change the current head value */
-	list->head->prev = newNode;
-	list->head = newNode;
-	
-	/* Increase size */
-	list->size += 1;
-}
+	node->next = NULL;
+	node->prev = NULL;
+	node->value = value;
 
-void insertLast(LinkedList* list, void* value)
-{
-	Node* current;
-	Node* newNode;
-	
-	current = list->head;
-
-	/* Traverse the list until we get to the last node */
-	while (current->next != NULL)
+	/* Check if LinkedList is new */
+	if (listIsEmpty(linkedList))
 	{
-		current = current->next;
+		linkedList->head = node;
+		linkedList->tail = node;
+	}
+	else
+	{
+		/* LinkedList is not empty */
+		node->next = linkedList->head;
+		linkedList->head->prev = node;
+		linkedList->head = node;
 	}
 
-	/* Create a new node */
-	newNode = (Node*) malloc(sizeof(Node));
+	/* Increase size of LinkedList */
+	linkedList->size += 1;
+}
 
-	newNode->next = NULL;
-	newNode->prev = current;
-	newNode->value = value;
+void insertLast(LinkedList* linkedList, void* value)
+{
+	Node* node;
 
-	/* Update the previous last item */
-	current->next = newNode;
-
-	free(newNode);
-
-	/* Increase size */
-	list->size += 1;
+	/* Assign memory to a new Node */
+	node = (Node*) malloc(sizeof(Node));
 	
-}
+	node->next = NULL;
+	node->prev = NULL;
+	node->value = value;
 
-void* peakFirst(LinkedList* list)
-{
-	Node* head = list->head;
-	return head->value;
-}
-
-void* peakLast(LinkedList* list)
-{
-	Node* current = list->head;
-
-	/* Traverse until we find the last element in list */
-	while (current->next != NULL)
+	/* Check if linked list is empty */
+	if (listIsEmpty(linkedList))
 	{
-		current = current->next;
+		linkedList->head = node;
+		linkedList->tail = node;
+	}
+	else
+	{
+		/* LinkedList is not empty */
+		node->prev = linkedList->tail;
+		linkedList->tail->next = node;
+		linkedList->tail = node;
 	}
 
-	/* Return last value in the list */
-	return current->value;
+	/* Increase size of LinkedList */
+	linkedList->size += 1;
 }
 
-void* removeLast(LinkedList* list)
+void* peekFirst(LinkedList* linkedList)
 {
-	Node* current;
-	Node* prev;
-	void* value;
-	
-	current = list->head;
-
-	while(current->next != NULL)
-	{
-		current = current->next;
-	}
-
-	prev = current->prev;
-	value = current->value;
-
-	prev->next = NULL;
-	free(prev->next);
-
-	list->size -= 1;
-	list->tail = prev;
-
-	return value;
+	return linkedList->head->value;
 }
 
-void* removeFirst(LinkedList* list)
+void* peekLast(LinkedList* linkedList)
 {
-	Node* head;
-	void* value;
-
-	head = list->head;
-	value = head->value;
-	head->next->prev = NULL;
-	head->next = NULL;
-	free(head);
-
-	list->size -= 1;
-
-	return value;
+	return linkedList->tail->value;
 }
 
-void deleteList(LinkedList* list)
+void removeFirst(LinkedList* linkedList)
 {
-	Node* current = list->head;
 	Node* tmp;
 
-	while (current->next != NULL) 
+	tmp = linkedList->head;
+	linkedList->head = tmp->next;
+	
+	free(tmp);
+}
+
+void removeLast(LinkedList* linkedList)
+{
+	Node* tmp;
+
+	tmp = linkedList->tail;
+
+	linkedList->tail = tmp->prev;
+
+	free(tmp);
+}
+
+void deleteList(LinkedList* linkedList)
+{
+	Node* current;
+
+	current = linkedList->head;
+
+	while (current->next != NULL)
 	{
-		tmp = current;
-		current = tmp->next;
-		free(tmp);
+		current = current->next;
+		free(current->prev);
 	}
 
 	free(current);
-	free(list);
+	free(linkedList);
 }
+
+int listIsEmpty(LinkedList* linkedList)
+{
+	int isEmpty = 0;
+
+	if ((linkedList->head = NULL))
+	{
+		isEmpty = 1;
+	}
+
+	return isEmpty;
+}
+
