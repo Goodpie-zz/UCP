@@ -9,6 +9,7 @@ LinkedList* createLinkedList(void* value)
 	newNode = (Node*) malloc(sizeof(Node));
 	newNode->value = value;
 	newNode->next = NULL;
+	newNode->prev = NULL; /* Head will always have prev of NULL */
 
 	list = (LinkedList*) malloc(sizeof(LinkedList));
 	list->head = newNode;
@@ -16,20 +17,21 @@ LinkedList* createLinkedList(void* value)
 	list->size = 1;
 
 	return list;
-	 
 }
 
 void insertFirst(LinkedList* list, void* value)
 {
-	Node* tmp;
 	Node* newNode;
 
 	/* Create the new node and store the head in a temp variable */ 
 	newNode = (Node*) malloc(sizeof(Node));
-	tmp = list->head;
 	
-	/* Assign new nodes next to be the previous head and the linked list head to the new node */
-	newNode->next = tmp;
+	newNode->next = list->head;
+	newNode->prev = NULL;
+	newNode->value = value;
+
+	/* Change the current head value */
+	list->head->prev = newNode;
 	list->head = newNode;
 	
 	/* Increase size */
@@ -49,11 +51,17 @@ void insertLast(LinkedList* list, void* value)
 		current = current->next;
 	}
 
-	/* Now inset a new node to the end of the linked list */
+	/* Create a new node */
 	newNode = (Node*) malloc(sizeof(Node));
+
 	newNode->next = NULL;
-	newNode->value = value;	
+	newNode->prev = current;
+	newNode->value = value;
+
+	/* Update the previous last item */
 	current->next = newNode;
+
+	free(newNode);
 
 	/* Increase size */
 	list->size += 1;
@@ -85,32 +93,40 @@ void* removeLast(LinkedList* list)
 	Node* current;
 	Node* prev;
 	void* value;
-
+	
 	current = list->head;
-	/* Loop through until we find the last element */
-	while (current->next != NULL)
+
+	while(current->next != NULL)
 	{
-		prev = current;
 		current = current->next;
 	}
 
+	prev = current->prev;
 	value = current->value;
-	prev->next = NULL;
-	free(current);
-	
-	return value;
 
+	prev->next = NULL;
+	free(prev->next);
+
+	list->size -= 1;
+	list->tail = prev;
+
+	return value;
 }
 
 void* removeFirst(LinkedList* list)
 {
-	Node* tmp = list->head;
-	if (tmp->next != NULL)
-	{
-		list->head = tmp->next;
-	}
+	Node* head;
+	void* value;
 
-	return tmp->value;
+	head = list->head;
+	value = head->value;
+	head->next->prev = NULL;
+	head->next = NULL;
+	free(head);
+
+	list->size -= 1;
+
+	return value;
 }
 
 void deleteList(LinkedList* list)
