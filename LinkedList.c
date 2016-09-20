@@ -80,6 +80,39 @@ void* peakLast(LinkedList* list)
 	return (*current).value;
 }
 
+void* removeLast(LinkedList* list)
+{
+	Node* current;
+	Node* prev;
+	void* value;
+
+	current = (*list).head;
+	/* Loop through until we find the last element */
+	while ((*current).next != NULL)
+	{
+		prev = current;
+		current = (*current).next;
+	}
+
+	value = (*current).value;
+	(*prev).next = NULL;
+	free(current);
+	
+	return value;
+
+}
+
+void* removeFirst(LinkedList* list)
+{
+	Node* tmp = (*list).head;
+	if (tmp->next != NULL)
+	{
+		list->head = tmp->next;
+	}
+
+	return tmp->value;
+}
+
 void deleteList(LinkedList* list)
 {
 	Node* current = (*list).head;
@@ -95,4 +128,3 @@ void deleteList(LinkedList* list)
 	free(current);
 	free(list);
 }
-

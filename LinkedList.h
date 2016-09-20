@@ -17,4 +17,6 @@ void insertLast(LinkedList*, void*);
 void* peekFirst(LinkedList*);
 void peekLast(LinkedList*);
 
+void* removeLast(LinkedList*);
+
 void deleteList(LinkedList*);
