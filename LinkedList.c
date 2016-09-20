@@ -26,14 +26,14 @@ void insertFirst(LinkedList* list, void* value)
 
 	/* Create the new node and store the head in a temp variable */ 
 	newNode = (Node*) malloc(sizeof(Node));
-	tmp = (*list).head;
+	tmp = list->head;
 	
 	/* Assign new nodes next to be the previous head and the linked list head to the new node */
-	(*newNode).next = tmp;
-	(*list).head = newNode;
+	newNode->next = tmp;
+	list->head = newNode;
 	
 	/* Increase size */
-	(*list).size += 1;
+	list->size += 1;
 }
 
 void insertLast(LinkedList* list, void* value)
@@ -41,43 +41,43 @@ void insertLast(LinkedList* list, void* value)
 	Node* current;
 	Node* newNode;
 	
-	current = (*list).head;
+	current = list->head;
 
 	/* Traverse the list until we get to the last node */
-	while ((*current).next != NULL)
+	while (current->next != NULL)
 	{
-		current = (*current).next;
+		current = current->next;
 	}
 
 	/* Now inset a new node to the end of the linked list */
 	newNode = (Node*) malloc(sizeof(Node));
-	(*newNode).next = NULL;
-	(*newNode).value = value;	
-	(*current).next = newNode;
+	newNode->next = NULL;
+	newNode->value = value;	
+	current->next = newNode;
 
 	/* Increase size */
-	(*list).size += 1;
+	list->size += 1;
 	
 }
 
 void* peakFirst(LinkedList* list)
 {
-	Node* head = (*list).head;
-	return (*head).value;
+	Node* head = list->head;
+	return head->value;
 }
 
 void* peakLast(LinkedList* list)
 {
-	Node* current = (*list).head;
+	Node* current = list->head;
 
 	/* Traverse until we find the last element in list */
-	while ((*current).next != NULL)
+	while (current->next != NULL)
 	{
-		current = (*current).next;
+		current = current->next;
 	}
 
 	/* Return last value in the list */
-	return (*current).value;
+	return current->value;
 }
 
 void* removeLast(LinkedList* list)
@@ -86,16 +86,16 @@ void* removeLast(LinkedList* list)
 	Node* prev;
 	void* value;
 
-	current = (*list).head;
+	current = list->head;
 	/* Loop through until we find the last element */
-	while ((*current).next != NULL)
+	while (current->next != NULL)
 	{
 		prev = current;
-		current = (*current).next;
+		current = current->next;
 	}
 
-	value = (*current).value;
-	(*prev).next = NULL;
+	value = current->value;
+	prev->next = NULL;
 	free(current);
 	
 	return value;
@@ -104,7 +104,7 @@ void* removeLast(LinkedList* list)
 
 void* removeFirst(LinkedList* list)
 {
-	Node* tmp = (*list).head;
+	Node* tmp = list->head;
 	if (tmp->next != NULL)
 	{
 		list->head = tmp->next;
@@ -115,13 +115,13 @@ void* removeFirst(LinkedList* list)
 
 void deleteList(LinkedList* list)
 {
-	Node* current = (*list).head;
+	Node* current = list->head;
 	Node* tmp;
 
-	while ((*current).next != NULL) 
+	while (current->next != NULL) 
 	{
 		tmp = current;
-		current = (*tmp).next;
+		current = tmp->next;
 		free(tmp);
 	}
 
