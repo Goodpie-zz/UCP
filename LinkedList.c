@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <stdio.h>
 #include "LinkedList.h"
 
 LinkedList* createLinkedList()
@@ -33,7 +34,6 @@ void insertFirst(LinkedList* linkedList, void* value)
     }
     else
     {
-
         newNode = (Node*) malloc(sizeof(Node));
 
         prevHead = linkedList->head;
@@ -61,8 +61,6 @@ void insertLast(LinkedList* linkedList, void* value)
     }
     else
     {
-
-
         newNode = (Node*) malloc(sizeof(Node));
         
         prevTail = linkedList->tail;
@@ -71,8 +69,10 @@ void insertLast(LinkedList* linkedList, void* value)
         newNode->prev = prevTail;
 
         linkedList->tail = newNode;
-        linkedList->size += 1;    
+        prevTail->next = newNode;  
     }
+
+    linkedList->size += 1;
 }
 
 void* peekFirst(LinkedList* linkedList)
@@ -91,6 +91,9 @@ void removeFirst(LinkedList* linkedList)
 
 	tmp = linkedList->head;
 	linkedList->head = tmp->next;
+    tmp->next->prev = NULL;
+
+    linkedList->size -= 1;
 	
 	free(tmp);
 }
@@ -100,8 +103,10 @@ void removeLast(LinkedList* linkedList)
 	Node* tmp;
 
 	tmp = linkedList->tail;
-
 	linkedList->tail = tmp->prev;
+    tmp->prev->next = NULL;
+
+    linkedList->size -= 1;
 
 	free(tmp);
 }
@@ -114,7 +119,8 @@ void deleteList(LinkedList* linkedList)
 
 	while (current->next != NULL)
 	{
-		current = current->next;
+		printf("Freeing: %d\n", *(int*) (current->value));
+        current = current->next;
 		free(current->prev);
 	}
 
