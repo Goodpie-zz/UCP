@@ -1,20 +1,26 @@
 typedef struct Node {
 	void* value;
 	struct Node* next;
+	struct Node* prev;
 } Node;
 
 typedef struct {
 	Node* head;
-	int size;
 	Node* tail;
+	int size;
 } LinkedList;
 
-LinkedList* createLinkedList(void*);
+LinkedList* createLinkedList();
 
 void insertFirst(LinkedList*, void*);
 void insertLast(LinkedList*, void*);
 
 void* peekFirst(LinkedList*);
-void peekLast(LinkedList*);
+void* peekLast(LinkedList*);
+
+void removeLast(LinkedList*);
+void removeFirst(LinkedList*);
 
 void deleteList(LinkedList*);
+
+int listIsEmpty(LinkedList*); 

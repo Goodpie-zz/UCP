@@ -1,98 +1,142 @@
 #include <stdlib.h>
+#include <stdio.h>
 #include "LinkedList.h"
 
-LinkedList* createLinkedList(void* value)
+LinkedList* createLinkedList()
 {
-	Node* newNode;
-	LinkedList* list;
+	LinkedList* linkedList;
+    Node* newNode;
 
-	newNode = (Node*) malloc(sizeof(Node));
-	(*newNode).value = value;
-	(*newNode).next = NULL;
+	/* Assign memory to LinkedList */
+	linkedList = (LinkedList*) malloc(sizeof(LinkedList));
 
-	list = (LinkedList*) malloc(sizeof(LinkedList));
-	(*list).head = newNode;
-	(*list).tail = newNode;
-	(*list).size = 1;
+    newNode = (Node*) malloc(sizeof(Node));
+	
+	/* Assign default LinkedList Attributes */
+	linkedList->head = newNode;
+	linkedList->tail = newNode;
+	linkedList->size = 0;
 
-	return list;
-	 
+	return linkedList;
 }
 
-void insertFirst(LinkedList* list, void* value)
+void insertFirst(LinkedList* linkedList, void* value)
+{
+    Node* newNode;
+    Node* prevHead;
+    
+    if (linkedList->size == 0)
+    {
+        newNode = linkedList->head;
+        newNode->value = value;
+        newNode->prev = NULL;
+        newNode->next = NULL;
+    }
+    else
+    {
+        newNode = (Node*) malloc(sizeof(Node));
+
+        prevHead = linkedList->head;
+
+        newNode->next = prevHead;
+        newNode->prev = NULL;
+
+        prevHead->prev = newNode;
+
+        linkedList->head = newNode;
+    }
+
+    linkedList->size += 1;
+
+}
+
+void insertLast(LinkedList* linkedList, void* value)
+{
+    Node* newNode;
+    Node* prevTail;
+
+    if (linkedList->size == 0)
+    {
+        insertFirst(linkedList, value);
+    }
+    else
+    {
+        newNode = (Node*) malloc(sizeof(Node));
+        
+        prevTail = linkedList->tail;
+
+        newNode->next = NULL;
+        newNode->prev = prevTail;
+
+        linkedList->tail = newNode;
+        prevTail->next = newNode;  
+    }
+
+    linkedList->size += 1;
+}
+
+void* peekFirst(LinkedList* linkedList)
+{
+	return linkedList->head->value;
+}
+
+void* peekLast(LinkedList* linkedList)
+{
+	return linkedList->tail->value;
+}
+
+void removeFirst(LinkedList* linkedList)
 {
 	Node* tmp;
-	Node* newNode;
 
-	/* Create the new node and store the head in a temp variable */ 
-	newNode = (Node*) malloc(sizeof(Node));
-	tmp = (*list).head;
+	tmp = linkedList->head;
+	linkedList->head = tmp->next;
+    tmp->next->prev = NULL;
+
+    linkedList->size -= 1;
 	
-	/* Assign new nodes next to be the previous head and the linked list head to the new node */
-	(*newNode).next = tmp;
-	(*list).head = newNode;
-	
-	/* Increase size */
-	(*list).size += 1;
+	free(tmp);
 }
 
-void insertLast(LinkedList* list, void* value)
+void removeLast(LinkedList* linkedList)
+{
+	Node* tmp;
+
+	tmp = linkedList->tail;
+	linkedList->tail = tmp->prev;
+    tmp->prev->next = NULL;
+
+    linkedList->size -= 1;
+
+	free(tmp);
+}
+
+void deleteList(LinkedList* linkedList)
 {
 	Node* current;
-	Node* newNode;
-	
-	current = (*list).head;
 
-	/* Traverse the list until we get to the last node */
-	while ((*current).next != NULL)
+	current = linkedList->head;
+
+	while (current->next != NULL)
 	{
-		current = (*current).next;
-	}
-
-	/* Now inset a new node to the end of the linked list */
-	newNode = (Node*) malloc(sizeof(Node));
-	(*newNode).next = NULL;
-	(*newNode).value = value;	
-	(*current).next = newNode;
-
-	/* Increase size */
-	(*list).size += 1;
-	
-}
-
-void* peakFirst(LinkedList* list)
-{
-	Node* head = (*list).head;
-	return (*head).value;
-}
-
-void* peakLast(LinkedList* list)
-{
-	Node* current = (*list).head;
-
-	/* Traverse until we find the last element in list */
-	while ((*current).next != NULL)
-	{
-		current = (*current).next;
-	}
-
-	/* Return last value in the list */
-	return (*current).value;
-}
-
-void deleteList(LinkedList* list)
-{
-	Node* current = (*list).head;
-	Node* tmp;
-
-	while ((*current).next != NULL) 
-	{
-		tmp = current;
-		current = (*tmp).next;
-		free(tmp);
+		printf("Freeing: %d\n", *(int*) (current->value));
+        current = current->next;
+		free(current->prev);
 	}
 
 	free(current);
-	free(list);
+	free(linkedList);
+}
+
+int listIsEmpty(LinkedList* linkedList)
+{
+	int isEmpty = 0;
+
+	if ((linkedList->head = NULL))
+	{
+		isEmpty = 1;
+	}
+
+	return isEmpty;
 }
 
