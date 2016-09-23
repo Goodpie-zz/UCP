@@ -4,13 +4,16 @@
 LinkedList* createLinkedList()
 {
 	LinkedList* linkedList;
+    Node* newNode;
 
 	/* Assign memory to LinkedList */
 	linkedList = (LinkedList*) malloc(sizeof(LinkedList));
+
+    newNode = (Node*) malloc(sizeof(Node));
 	
 	/* Assign default LinkedList Attributes */
-	linkedList->head = NULL;
-	linkedList->tail = NULL;
+	linkedList->head = newNode;
+	linkedList->tail = newNode;
 	linkedList->size = 0;
 
 	return linkedList;
@@ -20,15 +23,29 @@ void insertFirst(LinkedList* linkedList, void* value)
 {
     Node* newNode;
     Node* prevHead;
+    
+    if (linkedList->size == 0)
+    {
+        newNode = linkedList->head;
+        newNode->value = value;
+        newNode->prev = NULL;
+        newNode->next = NULL;
+    }
+    else
+    {
 
-    newNode = (Node*) malloc(sizeof(Node));
+        newNode = (Node*) malloc(sizeof(Node));
 
-    prevHead = linkedList->head;
+        prevHead = linkedList->head;
 
-    newNode->next = prevHead;
-    newNode->prev = NULL;
+        newNode->next = prevHead;
+        newNode->prev = NULL;
 
-    linkedList->head = newNode;
+        prevHead->prev = newNode;
+
+        linkedList->head = newNode;
+    }
+
     linkedList->size += 1;
 
 }
@@ -38,15 +55,24 @@ void insertLast(LinkedList* linkedList, void* value)
     Node* newNode;
     Node* prevTail;
 
-    newNode = (Node*) malloc(sizeof(Node));
-    
-    prevTail = linkedList->tail;
+    if (linkedList->size == 0)
+    {
+        insertFirst(linkedList, value);
+    }
+    else
+    {
 
-    newNode->next = NULL;
-    newNode->prev = prevTail;
 
-    linkedList->tail = newNode;
-    linkedList->size += 1;    
+        newNode = (Node*) malloc(sizeof(Node));
+        
+        prevTail = linkedList->tail;
+
+        newNode->next = NULL;
+        newNode->prev = prevTail;
+
+        linkedList->tail = newNode;
+        linkedList->size += 1;    
+    }
 }
 
 void* peekFirst(LinkedList* linkedList)
