@@ -18,60 +18,35 @@ LinkedList* createLinkedList()
 
 void insertFirst(LinkedList* linkedList, void* value)
 {
-	Node* node;
+    Node* newNode;
+    Node* prevHead;
 
-	/* Assign memory to a new Node */
-	node = (Node*) malloc(sizeof(Node));
+    newNode = (Node*) malloc(sizeof(Node));
 
-	node->next = NULL;
-	node->prev = NULL;
-	node->value = value;
+    prevHead = linkedList->head;
 
-	/* Check if LinkedList is new */
-	if (listIsEmpty(linkedList))
-	{
-		linkedList->head = node;
-		linkedList->tail = node;
-	}
-	else
-	{
-		/* LinkedList is not empty */
-		node->next = linkedList->head;
-		linkedList->head->prev = node;
-		linkedList->head = node;
-	}
+    newNode->next = prevHead;
+    newNode->prev = NULL;
 
-	/* Increase size of LinkedList */
-	linkedList->size += 1;
+    linkedList->head = newNode;
+    linkedList->size += 1;
+
 }
 
 void insertLast(LinkedList* linkedList, void* value)
 {
-	Node* node;
+    Node* newNode;
+    Node* prevTail;
 
-	/* Assign memory to a new Node */
-	node = (Node*) malloc(sizeof(Node));
-	
-	node->next = NULL;
-	node->prev = NULL;
-	node->value = value;
+    newNode = (Node*) malloc(sizeof(Node));
+    
+    prevTail = linkedList->tail;
 
-	/* Check if linked list is empty */
-	if (listIsEmpty(linkedList))
-	{
-		linkedList->head = node;
-		linkedList->tail = node;
-	}
-	else
-	{
-		/* LinkedList is not empty */
-		node->prev = linkedList->tail;
-		linkedList->tail->next = node;
-		linkedList->tail = node;
-	}
+    newNode->next = NULL;
+    newNode->prev = prevTail;
 
-	/* Increase size of LinkedList */
-	linkedList->size += 1;
+    linkedList->tail = newNode;
+    linkedList->size += 1;    
 }
 
 void* peekFirst(LinkedList* linkedList)
