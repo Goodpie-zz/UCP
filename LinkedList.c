@@ -1,6 +1,12 @@
 #include <stdlib.h>
 #include "LinkedList.h"
 
+
+/** 
+ * 	SUBMODULE: createLinkedList
+ * 	IMPORT: None EXPORT: LinkedList*
+ * 	Creates a LinkedList allocating memory to the first Node
+ */
 LinkedList* createLinkedList()
 {
 	LinkedList* linkedList;
@@ -16,6 +22,11 @@ LinkedList* createLinkedList()
 	return linkedList;
 }
 
+/**
+ * SUBMODULE: insertFirst
+ * IMPORT: LinkedList*, void* EXPORT: None
+ * Inserts a void* value into the haed of the LinkedList
+ */
 void insertFirst(LinkedList* linkedList, void* value)
 {
 	Node* node;
@@ -45,6 +56,11 @@ void insertFirst(LinkedList* linkedList, void* value)
 	linkedList->size += 1;
 }
 
+/**
+ * SUBMODULE: insertLast
+ * IMPORT LinkedList*, void* EXPORT None
+ * Inserts a void* value into the tail of the linked list
+ */
 void insertLast(LinkedList* linkedList, void* value)
 {
 	Node* node;
@@ -74,16 +90,31 @@ void insertLast(LinkedList* linkedList, void* value)
 	linkedList->size += 1;
 }
 
+/**
+ * SUBMODULE: peekFirst
+ * IMPORT LinkedList* EXPORT void*
+ * Retrieves the first element of the LinkedList without deleting it
+ */ 
 void* peekFirst(LinkedList* linkedList)
 {
 	return linkedList->head->value;
 }
 
+/**
+ * SUBMODULE: peekLast
+ * IMPORT LinkedList* EXPORT void*
+ * Retrieves the last element of the LinkedList without deleting it
+ */ 
 void* peekLast(LinkedList* linkedList)
 {
 	return linkedList->tail->value;
 }
 
+/**
+ * SUBMODULE: removeFirst
+ * IMPORT LinkedList* EXPORT None
+ * Removes the first element of the linked list
+ */ 
 void removeFirst(LinkedList* linkedList)
 {
 	Node* tmp;
@@ -94,6 +125,11 @@ void removeFirst(LinkedList* linkedList)
 	free(tmp);
 }
 
+/**
+ * SUBMODULE: removeLastt
+ * IMPORT LinkedList* EXPORT None
+ * Removes the last element of the linked list
+ */ 
 void removeLast(LinkedList* linkedList)
 {
 	Node* tmp;
@@ -105,6 +141,11 @@ void removeLast(LinkedList* linkedList)
 	free(tmp);
 }
 
+/**
+ * SUBMODULE: deleteList
+ * IMPORT LinkedList* EXPORT None
+ * Frees all memory currently allocated to the linked list
+ */ 
 void deleteList(LinkedList* linkedList)
 {
 	Node* current;
@@ -121,6 +162,11 @@ void deleteList(LinkedList* linkedList)
 	free(linkedList);
 }
 
+/*
+ * SUBMODULE: listIsEmpty
+ * IMPORT LinkedList* EXPERT int (bool)
+ * Checks whether the current linked list is empty or not
+ */
 int listIsEmpty(LinkedList* linkedList)
 {
 	int isEmpty = 0;
