@@ -21,6 +21,8 @@ void* peekLast(LinkedList*);
 void removeLast(LinkedList*);
 void removeFirst(LinkedList*);
 
+void* findIndex(LinkedList*, int);
+
 void deleteList(LinkedList*);
 
 int listIsEmpty(LinkedList*); 

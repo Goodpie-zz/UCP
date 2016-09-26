@@ -2,7 +2,6 @@
 #include <stdio.h>
 #include "LinkedList.h"
 
-
 /** 
  * 	SUBMODULE: createLinkedList
  * 	IMPORT: None EXPORT: LinkedList*
@@ -148,6 +147,37 @@ void removeLast(LinkedList* linkedList)
 }
 
 /**
+ * SUBMODULE findIndex
+ * IMPORT LinkedList*, int EXPORT void*
+ * Returns the value at the given index within the linked list
+ */
+void* findIndex(LinkedList* linkedList, int index)
+{
+	int i;
+	Node* current;
+	void* value;
+
+	current = linkedList->head;
+
+	/* Traverse the linked list until index is found */
+	if (index >= linkedList->size)
+	{
+		value = NULL;
+	}
+	else
+	{
+		for (i = 0; i < index; i ++)
+		{
+			current = current->next;
+		}
+
+		value = current->value;
+	}
+
+	return value;
+}
+
+/**
  * SUBMODULE: deleteList
  * IMPORT LinkedList* EXPORT None
  * Frees all memory currently allocated to the linked list
@@ -161,10 +191,12 @@ void deleteList(LinkedList* linkedList)
 	while (current->next != NULL)
 	{
 		printf("Freeing: %d\n", *(int*) (current->value));
+		free(current->value);
         current = current->next;
 		free(current->prev);
 	}
 
+	free(current->value);
 	free(current);
 	free(linkedList);
 }

@@ -13,9 +13,10 @@ int main(int argc, char* argv[])
 	char* outFileName;
 	int validFileParams;
 	LinkedList* linkedList;
-	int testValue;
+	int* testValue;
 
-	testValue = 10;
+	testValue = (int*) malloc(sizeof(int));
+	*testValue = 10;
 
 	/* Allocate memory to the file names */
 	inFileName = (char*) malloc(sizeof(char) * MAX_FILENAME_SIZE);
@@ -39,8 +40,10 @@ int main(int argc, char* argv[])
 
 
 	linkedList = createLinkedList();
-	insertFirst(linkedList, &testValue);
-	insertLast(linkedList, &testValue);
+	insertFirst(linkedList, testValue);
+	printf("Value found at 0: %d\n", *((int*) findIndex(linkedList, 0)));
+	*testValue = 100;
+	insertLast(linkedList, testValue);
 	removeLast(linkedList);
 	deleteList(linkedList);
 
