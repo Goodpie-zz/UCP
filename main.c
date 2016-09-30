@@ -2,7 +2,11 @@
 #include <stdlib.h>
 #include <string.h>
 #include "main.h"
+#include "CSVParser.h"
+#ifndef LINKEDLIST_H
+#define LINKEDLIST_H
 #include "LinkedList.h"
+#endif
 
 /* Max filename size is 255. Assuming file is in same directory */
 #define MAX_FILENAME_SIZE 255
@@ -13,10 +17,8 @@ int main(int argc, char* argv[])
 	char* outFileName;
 	int validFileParams;
 	LinkedList* linkedList;
-	int* testValue;
-
-	testValue = (int*) malloc(sizeof(int));
-	*testValue = 10;
+	FILE* inFile;
+	FILE* outFile;
 
 	/* Allocate memory to the file names */
 	inFileName = (char*) malloc(sizeof(char) * MAX_FILENAME_SIZE);
@@ -36,18 +38,41 @@ int main(int argc, char* argv[])
 		{
 			displayCorrectUsage();
 		}
+		else
+		{
+			inFile = fopen(inFileName, "r");
+			if (inFile == NULL)
+			{
+				perror("Error opening input file");
+			}
+			else
+			{
+				if (ferror(inFile))
+				{
+					perror("Error reading from input file");
+				}
+				else
+				{
+					linkedList = parseCSV(inFile);
+				}
+				fclose(inFile);
+			}
+			outFile = fopen(outFileName, "w");
+			if (outFile == NULL)
+			{
+				perror("Error opening output file");
+			}
+			else
+			{
+				if (ferror(outFile))
+				{
+					perror("Error writing to file");
+				}
+				fclose(outFile);
+			}
+		}
 	}
 
-
-	linkedList = createLinkedList();
-	insertFirst(linkedList, testValue);
-	printf("Value found at 0: %d\n", *((int*) findIndex(linkedList, 0)));
-	*testValue = 100;
-	insertLast(linkedList, testValue);
-	removeLast(linkedList);
-	deleteList(linkedList);
-
-	/* Free all allocated variables */
 	free(inFileName);
 	free(outFileName);
 	
