@@ -35,10 +35,9 @@ LinkedList* parseCSV(FILE* inFile)
 		if (ch == '\n')
 		{
 			currentLine += 1;
-			printf(" \n");
 		}
 		
-		printf(" %c", ch);
+		printf("%c", ch);
 		ch = fgetc(inFile);
 	}
 

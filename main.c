@@ -1,11 +1,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
 #include "main.h"
 #include "CSVParser.h"
+
 #ifndef LINKEDLIST_H
-#define LINKEDLIST_H
-#include "LinkedList.h"
+	#define LINKEDLIST_H
+	#include "LinkedList.h"
 #endif
 
 /* Max filename size is 255. Assuming file is in same directory */
@@ -13,16 +15,12 @@
 
 int main(int argc, char* argv[])
 {
-	char* inFileName;
-	char* outFileName;
+	char inFileName[MAX_FILENAME_SIZE];
+	char outFileName[MAX_FILENAME_SIZE];
 	int validFileParams;
 	LinkedList* linkedList;
 	FILE* inFile;
 	FILE* outFile;
-
-	/* Allocate memory to the file names */
-	inFileName = (char*) malloc(sizeof(char) * MAX_FILENAME_SIZE);
-	outFileName = (char*) malloc(sizeof(char) * MAX_FILENAME_SIZE);
 
 	if (argc != 5)
 	{
@@ -54,6 +52,7 @@ int main(int argc, char* argv[])
 				else
 				{
 					linkedList = parseCSV(inFile);
+					free(linkedList);
 				}
 				fclose(inFile);
 			}
@@ -72,9 +71,6 @@ int main(int argc, char* argv[])
 			}
 		}
 	}
-
-	free(inFileName);
-	free(outFileName);
 	
 	return 0;		
 }
