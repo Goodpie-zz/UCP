@@ -23,6 +23,6 @@ void removeFirst(LinkedList*);
 
 void* findIndex(LinkedList*, int);
 
-void deleteList(LinkedList*);
+void freeList(LinkedList*);
 
 int listIsEmpty(LinkedList*); 

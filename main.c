@@ -52,7 +52,7 @@ int main(int argc, char* argv[])
 				else
 				{
 					linkedList = parseCSV(inFile);
-					free(linkedList);
+					freeList(linkedList);	
 				}
 				fclose(inFile);
 			}

@@ -182,7 +182,7 @@ void* findIndex(LinkedList* linkedList, int index)
  * IMPORT LinkedList* EXPORT None
  * Frees all memory currently allocated to the linked list
  */ 
-void deleteList(LinkedList* linkedList)
+void freeList(LinkedList* linkedList)
 {
 	Node* current;
 
