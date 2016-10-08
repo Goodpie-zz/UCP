@@ -1,8 +1,8 @@
 #include <stdlib.h>
 #include <stdio.h>
-#include "LinkedList.h"
+#include "linkedlist.h"
 
-/** 
+/**
  * 	SUBMODULE: createLinkedList
  * 	IMPORT: None EXPORT: LinkedList*
  * 	Creates a LinkedList allocating memory to the first Node
@@ -16,7 +16,7 @@ LinkedList* createLinkedList()
 	linkedList = (LinkedList*) malloc(sizeof(LinkedList));
 
     newNode = (Node*) malloc(sizeof(Node));
-	
+
 	/* Assign default LinkedList Attributes */
 	linkedList->head = newNode;
 	linkedList->tail = newNode;
@@ -34,7 +34,7 @@ void insertFirst(LinkedList* linkedList, void* value)
 {
     Node* newNode;
     Node* prevHead;
-    
+
     if (linkedList->size == 0)
     {
         newNode = linkedList->head;
@@ -77,14 +77,14 @@ void insertLast(LinkedList* linkedList, void* value)
     else
     {
         newNode = (Node*) malloc(sizeof(Node));
-        
+
         prevTail = linkedList->tail;
 
         newNode->next = NULL;
         newNode->prev = prevTail;
 
         linkedList->tail = newNode;
-        prevTail->next = newNode;  
+        prevTail->next = newNode;
     }
 
     linkedList->size += 1;
@@ -94,7 +94,7 @@ void insertLast(LinkedList* linkedList, void* value)
  * SUBMODULE: peekFirst
  * IMPORT LinkedList* EXPORT void*
  * Retrieves the first element of the LinkedList without deleting it
- */ 
+ */
 void* peekFirst(LinkedList* linkedList)
 {
 	return linkedList->head->value;
@@ -104,7 +104,7 @@ void* peekFirst(LinkedList* linkedList)
  * SUBMODULE: peekLast
  * IMPORT LinkedList* EXPORT void*
  * Retrieves the last element of the LinkedList without deleting it
- */ 
+ */
 void* peekLast(LinkedList* linkedList)
 {
 	return linkedList->tail->value;
@@ -114,7 +114,7 @@ void* peekLast(LinkedList* linkedList)
  * SUBMODULE: removeFirst
  * IMPORT LinkedList* EXPORT None
  * Removes the first element of the linked list
- */ 
+ */
 void removeFirst(LinkedList* linkedList)
 {
 	Node* tmp;
@@ -124,7 +124,7 @@ void removeFirst(LinkedList* linkedList)
     tmp->next->prev = NULL;
 
     linkedList->size -= 1;
-	
+
 	free(tmp);
 }
 
@@ -132,7 +132,7 @@ void removeFirst(LinkedList* linkedList)
  * SUBMODULE: removeLastt
  * IMPORT LinkedList* EXPORT None
  * Removes the last element of the linked list
- */ 
+ */
 void removeLast(LinkedList* linkedList)
 {
 	Node* tmp;
@@ -181,7 +181,7 @@ void* findIndex(LinkedList* linkedList, int index)
  * SUBMODULE: deleteList
  * IMPORT LinkedList* EXPORT None
  * Frees all memory currently allocated to the linked list
- */ 
+ */
 void freeList(LinkedList* linkedList)
 {
 	Node* current;

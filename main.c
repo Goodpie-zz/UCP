@@ -3,11 +3,12 @@
 #include <string.h>
 
 #include "main.h"
-#include "CSVParser.h"
+#include "csvparser.h"
+#include "filereader.h"
 
 #ifndef LINKEDLIST_H
 	#define LINKEDLIST_H
-	#include "LinkedList.h"
+	#include "linkedlist.h"
 #endif
 
 /* Max filename size is 255. Assuming file is in same directory */
@@ -15,10 +16,15 @@
 
 int main(int argc, char* argv[])
 {
-	char inFileName[MAX_FILENAME_SIZE];
-	char outFileName[MAX_FILENAME_SIZE];
 	int validFileParams;
-	LinkedList* linkedList;
+	int validInFile;
+	int validOutFile;
+
+	char inFileName[MAX_FILENAME_SIZE];
+	char* outFileName[MAX_FILENAME_SIZE];
+
+	LinkedList* linkedList = NULL;
+
 	FILE* inFile;
 	FILE* outFile;
 
@@ -38,41 +44,20 @@ int main(int argc, char* argv[])
 		}
 		else
 		{
-			inFile = fopen(inFileName, "r");
-			if (inFile == NULL)
+			validInFile = openFile(&inFile, inFileName, "r");
+			validOutFile = openFile(&outFile, outFileName, "w");
+
+			if (validInFile && validOutFile)
 			{
-				perror("Error opening input file");
-			}
-			else
-			{
-				if (ferror(inFile))
-				{
-					perror("Error reading from input file");
-				}
-				else
-				{
-					linkedList = parseCSV(inFile);
-					freeList(linkedList);	
-				}
+				linkedList = parseCSV(inFile);
+				freeLinkedList(linkedList);
 				fclose(inFile);
-			}
-			outFile = fopen(outFileName, "w");
-			if (outFile == NULL)
-			{
-				perror("Error opening output file");
-			}
-			else
-			{
-				if (ferror(outFile))
-				{
-					perror("Error writing to file");
-				}
 				fclose(outFile);
 			}
 		}
 	}
-	
-	return 0;		
+
+	return 0;
 }
 
 /**
@@ -84,7 +69,7 @@ int getIOFiles(char** args, char* inFileName, char* outFileName)
 {
 	int inFileFound = 0;
 	int outFileFound = 0;
-	
+
 	/* Check for an input file parameter */
 	if (*args[1] == 'i')
 	{
@@ -108,7 +93,7 @@ int getIOFiles(char** args, char* inFileName, char* outFileName)
 		strcpy(outFileName, args[4]);
 		outFileFound = 1;
 	}
-	
+
 	return inFileFound && outFileFound;
 }
 
@@ -119,5 +104,5 @@ int getIOFiles(char** args, char* inFileName, char* outFileName)
  */
 void displayCorrectUsage()
 {
-	printf("Correct Usage:\n\t$ sortingAssignment i inFile o outfile\n");
+	printf("Correct Usage:\n$ sortingAssignment i <inFile> o <outfile>\n");
 }
