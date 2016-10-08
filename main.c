@@ -21,7 +21,7 @@ int main(int argc, char* argv[])
 	int validOutFile;
 
 	char inFileName[MAX_FILENAME_SIZE];
-	char* outFileName[MAX_FILENAME_SIZE];
+	char outFileName[MAX_FILENAME_SIZE];
 
 	LinkedList* linkedList = NULL;
 

@@ -13,6 +13,9 @@ LinkedList* createLinkedList()
 
     /* Assign memory to head node */
     node = (Node*) malloc(sizeof(Node));
+    node->value = NULL;
+    node->prev = NULL;
+    node->next = NULL;
 
     /* Assign default values */
     linkedList->head = node;
@@ -78,7 +81,8 @@ void insertLast(LinkedList* linkedList, void* value)
     {
         node = (Node*) malloc(sizeof(Node));
         node->next = NULL;
-        node->prev = prevTail;
+        node->value = value;
+        node->prev = NULL;
 
         prevTail->next = node;
 
@@ -126,3 +130,34 @@ void freeNode(Node* node)
     free(node);
 }
 
+void* getNext(LinkedList* linkedList, Node** node)
+{
+    void* value;
+    if (*node == NULL)
+    {
+        value = NULL;
+    }
+    else
+    {
+        value = (*node)->value;
+        *node = (*node)->next;
+    }
+
+    return value;
+}
+
+void* getPrev(LinkedList* linkedList, Node** node)
+{
+    void* value;
+    if (*node == NULL)
+    {
+        value = NULL;
+    }
+    else
+    {
+        value = (*node)->value;
+        *node = (*node)->next;
+    }
+
+    return value;
+}
