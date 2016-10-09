@@ -5,142 +5,133 @@
 #include "csvparser.h"
 #include "filereader.h"
 
-LinkedList* parseCSV(FILE* inFile)
+#define MAX_STRING_LENGTH 4096
+
+/**
+ * SUBMODULE: parseCSV
+ * IMPORT: FILE*, LinkedList**, LinkedList**
+ * EXPORT: int
+ * Takes an infile and parses it into two seperate linked lists
+ */
+int parseCSV(FILE* inFile, LinkedList** dataList, LinkedList** headerList)
 {
+    /* vars for handling information about the CSV file */
     int currentLine = 1;
     int endOfFile = 0;
     int headerPass = 1;
 
     char* line = NULL;
-    LinkedList* data = createLinkedList();
-    LinkedList* headers = createLinkedList();
 
+    /* Create default linked lists for assigning values */
+    *dataList = createLinkedList();
+    *headerList = createLinkedList();
+
+    /* Loop through file until error or EOF */
     while ((endOfFile == 0) && (headerPass == 1))
     {
         line = readLine(inFile, &endOfFile);
         if (currentLine == 1)
         {
-            printf("%s\n", line);
-            headerPass = defineHeaders(line, &headers);
+            /* Header, insert into header list */
+            headerPass = defineHeaders(line, *headerList);
         }
-
-        insertLast(data, line);
+        else
+        {
+            /* Not header, insert into data list */
+            insertLast(*dataList, line);
+        }
         currentLine += 1;
-        free(line);
     }
 
     if (!headerPass)
     {
-        printf("exiting program due to invalid column headers\n");
+        printf("Error: Failed to parse headers in CSV file\n");
     }
 
-    freeHeaderLinkedList(headers);
-    return data;
+    return headerPass;
 }
 
-int defineHeaders(char* line, LinkedList** headers)
+/**
+ * SUBMODULE: defineHeaders
+ * IMPORT: char*, LinkedList*
+ * EXPORT: int
+ * Reads a line containing headers and adds them to linked list
+ */
+int defineHeaders(char* line, LinkedList* headers)
 {
     int success = 1;
-    HeaderInfo* header = (HeaderInfo*) malloc(sizeof(HeaderInfo));
+    char* token;
 
-    char* token = strtok(line, ",");
-    char tmpType[4096];
-    char tmpName[4096];
+    HeaderInfo* header;
 
+    /* Tokenize the header line and get header definitions */
+    token = strtok(line, ",");
     while (token != NULL && success == 1)
     {
-        if (strlen(token) > 4096)
+        /* Don't want to handle really long header names */
+        if (strlen(token) > MAX_STRING_LENGTH)
         {
             printf("Header information to long");
             success = 0;
         }
         else
         {
-            if (sscanf(token, "%s (%[^)])", tmpName, tmpType) == 2)
+            /* Can proceed with creating header information struct */
+            header = (HeaderInfo*) malloc(sizeof(HeaderInfo));
+            header->name = (char*) malloc(sizeof(char) * MAX_STRING_LENGTH);
+            header->type = (char*) malloc(sizeof(char) * MAX_STRING_LENGTH);
+
+            /* Check we are getting the correct amount of values from token */
+            if (sscanf(token, "%s (%[^)])", header->name, header->type) == 2)
             {
-                printf("%s %s\n", tmpName, tmpType);
-
-                /* Determine what type of data it is */
-                header->name = (char*) malloc(sizeof(char) * strlen(tmpName));
-                strcpy(header->name, tmpName);
-                header->type = (char*) malloc(sizeof(char) * 7);
-                determineHeaderType(tmpType, header->type);
-
-                if (strcmp(header->type, "NA") == 0)
-                {
-                    printf("Invalid column header data type: %s\n", tmpType);
-                    success = 0;
-                }
-                else
-                {
-                    printf("Inserting: %s of type %s\n", header->name, header->type);
-                    insertLast(*headers, header);
-                }
-                free(header->name);
-                free(header->type);
+                /* Insert into headers list */
+                /* TODO: Handle issue where some headers pass but one doesn't */
+                insertLast(headers, header);
             }
             else
             {
+                /* Show error to user and exit */
                 printf("Invalid column header forma %s\n", token);
                 success = 0;
             }
         }
+        /* Continue tokenizing */
         token = strtok(NULL, ",");
     }
 
-    free(header);
+    free(line); /* No longer need line so free it */
 
     return success;
 }
 
-void determineHeaderType(char* title, char* type)
+/**
+ * SUBMODULE: freeHeaderLinkedList
+ * IMPORT: LinkedList*
+ * EXPORT: None
+ * Handles specific case of freeing header list containing HeaderInfo struct
+ */
+void freeHeaderLinkedList(LinkedList* linkedList)
 {
-    if (strcmp(title, "integer") == 0)
-    {
-        strcpy(type,"int\0");
-    }
-    else if (strcmp(title, "string") == 0)
-    {
-        strcpy(type,"string\0");
-    }
-    else if (strcmp(title, "float") == 0)
-    {
-        strcpy(type,"float\0");
-    }
-    else if (strcmp(title, "double") == 0)
-    {
-        strcpy(type,"double\0");
-    }
-    else
-    {
-        strcpy(type,"NA\0");
-    }
+    HeaderInfo* value;
+    Node *node, *nextNode;
+    node = linkedList->head;
 
-}
-
-void freeHeaderLinkedList(LinkedList* headerLinkedList)
-{
-    Node* tmp;
-    Node* currentNode = headerLinkedList->tail;
-    HeaderInfo* headerInfo;
-
-    while (currentNode->prev != NULL)
+    /* Traverse list until last value (where next is NULL) */
+    while (node != NULL)
     {
-        tmp = currentNode;
-        headerInfo = (HeaderInfo*) tmp->value;
-        freeHeaderInfo(headerInfo);
-        currentNode = tmp->prev;
-        free(tmp);
+        /* Temporarily assign next node */
+        nextNode = node->next;
+
+        /* Cast value to HeaderInfo and free struct */
+        value = (HeaderInfo*) node->value;
+        free(value->name);
+        free(value->type);
+        free(value);
+        free(node);
+
+        node = nextNode;
     }
 
-    free(currentNode);
-    free(headerLinkedList);
-}
-
-
-void freeHeaderInfo(HeaderInfo* HeaderInfo)
-{
-    free(HeaderInfo->name);
-    free(HeaderInfo->type);
-    free(HeaderInfo);
+    /* Free LinkedList */
+    free(linkedList);
 }

@@ -23,10 +23,14 @@ int main(int argc, char* argv[])
 	char inFileName[MAX_FILENAME_SIZE];
 	char outFileName[MAX_FILENAME_SIZE];
 
-	LinkedList* linkedList = NULL;
+	/* Create linked list and default value of NULL for error handling */
+	LinkedList* dataList = NULL;
+	LinkedList* headerList = NULL;
 
 	FILE* inFile;
 	FILE* outFile;
+
+	int parsedCSV;
 
 	if (argc != 5)
 	{
@@ -49,10 +53,32 @@ int main(int argc, char* argv[])
 
 			if (validInFile && validOutFile)
 			{
-				linkedList = parseCSV(inFile);
-				freeLinkedList(linkedList);
+				parsedCSV = parseCSV(inFile, &dataList, &headerList);
+				if (parsedCSV)
+				{
+					freeLinkedList(dataList);
+					freeHeaderLinkedList(headerList);
+				}
+				else
+				{
+					printf("Exiting: Invalid CSV file format");
+					freeLinkedList(dataList);
+					freeLinkedList(headerList);
+				}
+
 				fclose(inFile);
 				fclose(outFile);
+			}
+			else
+			{
+				if (!validInFile)
+				{
+					fclose(outFile);
+				}
+				else
+				{
+					fclose(inFile);
+				}
 			}
 		}
 	}

@@ -27,19 +27,17 @@ LinkedList* createLinkedList()
 
 void freeLinkedList(LinkedList* linkedList)
 {
-    /* Start at tail end */
-    Node* tmp;
-    Node* currentNode = linkedList->tail;
+    Node *node, *nextNode;
+    node = linkedList->head;
 
-    while(currentNode->prev != NULL)
+    while (node != NULL)
     {
-        tmp = currentNode;
-        currentNode = tmp->prev;
-        freeNode(tmp);
+        nextNode = node->next;
+        free(node->value);
+        free(node);
+        node = nextNode;
     }
 
-    /* Free head node and list */
-    freeNode(currentNode);
     free(linkedList);
 }
 
@@ -110,7 +108,9 @@ void removeFirst(LinkedList* linkedList)
     linkedList->head = prevHead->next;
 
     linkedList->size -= 1;
-    freeNode(prevHead);
+
+    free(prevHead->value);
+    free(prevHead);
 }
 
 void removeLast(LinkedList* linkedList)
@@ -122,12 +122,8 @@ void removeLast(LinkedList* linkedList)
 
     linkedList->size -= 1;
 
-    freeNode(prevTail);
-}
-
-void freeNode(Node* node)
-{
-    free(node);
+    free(prevTail->value);
+    free(prevTail);
 }
 
 void* getNext(LinkedList* linkedList, Node** node)

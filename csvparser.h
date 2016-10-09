@@ -9,12 +9,12 @@ typedef struct
     char* name;
 } HeaderInfo;
 
-LinkedList* parseCSV(FILE*);
+int parseCSV(FILE*, LinkedList**, LinkedList**);
 
 void freeCSVLinkedList(LinkedList*);
 
-int defineHeaders(char*, LinkedList**);
-void determineHeaderType(char*, char*);
+int defineHeaders(char*, LinkedList*);
+char* determineHeaderType(char*);
 
 void freeHeaderLinkedList(LinkedList*);
 void freeHeaderInfo(HeaderInfo*);
