@@ -1,4 +1,4 @@
-test(one), test(two), test(three)
+test (integer), test2 (string), test3 (string)
 asdas, asdsa, asdsa, asdas
 asdass, asdas, asdsa, asdas
 asddsa

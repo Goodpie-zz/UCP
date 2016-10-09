@@ -13,6 +13,9 @@ LinkedList* createLinkedList()
 
     /* Assign memory to head node */
     node = (Node*) malloc(sizeof(Node));
+    node->value = NULL;
+    node->prev = NULL;
+    node->next = NULL;
 
     /* Assign default values */
     linkedList->head = node;
@@ -24,19 +27,17 @@ LinkedList* createLinkedList()
 
 void freeLinkedList(LinkedList* linkedList)
 {
-    /* Start at tail end */
-    Node* tmp;
-    Node* currentNode = linkedList->tail;
+    Node *node, *nextNode;
+    node = linkedList->head;
 
-    while(currentNode->prev != NULL)
+    while (node != NULL)
     {
-        tmp = currentNode;
-        currentNode = tmp->prev;
-        freeNode(tmp);
+        nextNode = node->next;
+        free(node->value);
+        free(node);
+        node = nextNode;
     }
 
-    /* Free head node and list */
-    freeNode(currentNode);
     free(linkedList);
 }
 
@@ -78,7 +79,8 @@ void insertLast(LinkedList* linkedList, void* value)
     {
         node = (Node*) malloc(sizeof(Node));
         node->next = NULL;
-        node->prev = prevTail;
+        node->value = value;
+        node->prev = NULL;
 
         prevTail->next = node;
 
@@ -106,7 +108,9 @@ void removeFirst(LinkedList* linkedList)
     linkedList->head = prevHead->next;
 
     linkedList->size -= 1;
-    freeNode(prevHead);
+
+    free(prevHead->value);
+    free(prevHead);
 }
 
 void removeLast(LinkedList* linkedList)
@@ -118,11 +122,38 @@ void removeLast(LinkedList* linkedList)
 
     linkedList->size -= 1;
 
-    freeNode(prevTail);
+    free(prevTail->value);
+    free(prevTail);
 }
 
-void freeNode(Node* node)
+void* getNext(LinkedList* linkedList, Node** node)
 {
-    free(node);
+    void* value;
+    if (*node == NULL)
+    {
+        value = NULL;
+    }
+    else
+    {
+        value = (*node)->value;
+        *node = (*node)->next;
+    }
+
+    return value;
 }
 
+void* getPrev(LinkedList* linkedList, Node** node)
+{
+    void* value;
+    if (*node == NULL)
+    {
+        value = NULL;
+    }
+    else
+    {
+        value = (*node)->value;
+        *node = (*node)->next;
+    }
+
+    return value;
+}
