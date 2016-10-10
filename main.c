@@ -61,9 +61,7 @@ int main(int argc, char* argv[])
 				}
 				else
 				{
-					printf("Exiting: Invalid CSV file format");
-					freeLinkedList(dataList);
-					freeLinkedList(headerList);
+					printf("Exiting: Invalid CSV file format\n");
 				}
 
 				fclose(inFile);

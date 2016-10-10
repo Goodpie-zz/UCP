@@ -45,6 +45,7 @@ int parseCSV(FILE* inFile, LinkedList** dataList, LinkedList** headerList)
 
     if (!headerPass)
     {
+        freeLinkedList(*dataList);
         printf("Error: Failed to parse headers in CSV file\n");
     }
 
@@ -60,6 +61,7 @@ int parseCSV(FILE* inFile, LinkedList** dataList, LinkedList** headerList)
 int defineHeaders(char* line, LinkedList* headers)
 {
     int success = 1;
+    int headersAddded = 0;
     char* token;
 
     HeaderInfo* header;
@@ -87,19 +89,36 @@ int defineHeaders(char* line, LinkedList* headers)
                 /* Insert into headers list */
                 /* TODO: Handle issue where some headers pass but one doesn't */
                 insertLast(headers, header);
+                headersAddded += 1;
             }
             else
             {
                 /* Show error to user and exit */
-                printf("Invalid column header forma %s\n", token);
+                printf("Invalid column header format: %s", token);
                 success = 0;
+                if (headersAddded > 0)
+                {
+                    freeHeaderLinkedList(headers);
+                    free(header->name);
+                    free(header->type);
+                    free(header);
+                }
             }
+        }
+
+        if (headersAddded == 0)
+        {
+            freeLinkedList(headers);
+            free(header->name);
+            free(header->type);
+            free(header);
         }
         /* Continue tokenizing */
         token = strtok(NULL, ",");
     }
 
     free(line); /* No longer need line so free it */
+    success = success && (headersAddded > 0);
 
     return success;
 }
