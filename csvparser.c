@@ -19,6 +19,7 @@ int parseCSV(FILE* inFile, LinkedList** dataList, LinkedList** headerList)
     int currentLine = 1;
     int endOfFile = 0;
     int headerPass = 1;
+    int linePass = 1;
 
     char* line = NULL;
 
@@ -38,7 +39,7 @@ int parseCSV(FILE* inFile, LinkedList** dataList, LinkedList** headerList)
         else
         {
             /* Not header, insert into data list */
-            insertLast(*dataList, line);
+            linePass = parseLineToLinkedList(*dataList, *headerList, line);
         }
         currentLine += 1;
     }
@@ -47,6 +48,18 @@ int parseCSV(FILE* inFile, LinkedList** dataList, LinkedList** headerList)
     {
         freeLinkedList(*dataList);
         printf("Error: Failed to parse headers in CSV file\n");
+    }
+
+    if (!linePass)
+    {
+        if (currentLine < 3)
+        {
+            freeRowLinkedList(*dataList);
+        }
+        else
+        {
+            freeLinkedList(*dataList);
+        }
     }
 
     return headerPass;
@@ -175,21 +188,81 @@ int validateHeaderType(char* type)
 int parseLineToLinkedList(LinkedList* dataList, LinkedList* headerList, char* line)
 {
     char* token;
+    int tmpInteger;
     int success = 1;
+
+    int headerIndex = 0;
+    HeaderInfo* currentHeader;
+
+    LinkedList* rowLinkedList = createLinkedList();
+
     /* Tokenize the header line and get header definitions */
     token = strtok(line, ",");
     while (token != NULL && success == 1)
     {
+        currentHeader = (HeaderInfo*) findIndex(headerList, headerIndex);
+        if (currentHeader != NULL)
+        {
+            if (strcmp(currentHeader->type, "string") == 0)
+            {
+                insertLast(rowLinkedList, token);
+            }
+            else if (strcmp(currentHeader->type, "integer") == 0)
+            {
+                if (sscanf(token, "%d", &tmpInteger) == 1)
+                {
+                    insertLast(rowLinkedList, &tmpInteger);
+                }
+                else
+                {
+                    success = 0;
+                }
+            }
+        }
+        else
+        {
+            success = 0;
+        }
 
         /* Continue tokenizing */
         token = strtok(NULL, ",");
+
+        headerIndex += 1;
     }
+
+    insertLast(dataList, rowLinkedList);
+
+    free(line);
+
     return success;
 }
 
-int validateCell(LinkedList* rowList, char* token)
+void freeRowLinkedList(LinkedList* linkedList)
 {
-    return 0;
+    Node *outerNode, *outerNextNode;
+
+    LinkedList* innerList;
+    Node *innerNode, *innerNextNode;
+    outerNode = linkedList->head;
+
+    while (outerNode != NULL)
+    {
+        outerNextNode = outerNode->next;
+
+        innerList = (LinkedList*) outerNode->value;
+        innerNode = innerList->head;
+        while (innerNode != NULL)
+        {
+            innerNextNode = innerNode->next;
+            free(innerNode);
+            innerNode = innerNextNode;
+        }
+        free(innerList);
+
+        free(outerNode);
+        outerNode = outerNextNode;
+    }
+    free(linkedList);
 }
 
 /**

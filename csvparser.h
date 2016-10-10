@@ -18,5 +18,9 @@ char* determineHeaderType(char*);
 int addHeaderFromToken(LinkedList*, char*);
 int validateHeaderType(char*);
 
+int parseLineToLinkedList(LinkedList*, LinkedList*, char*);
+
 void freeHeaderLinkedList(LinkedList*);
 void freeHeader(HeaderInfo*);
+
+void freeRowLinkedList(LinkedList*);

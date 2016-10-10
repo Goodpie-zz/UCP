@@ -56,7 +56,7 @@ int main(int argc, char* argv[])
 				parsedCSV = parseCSV(inFile, &dataList, &headerList);
 				if (parsedCSV)
 				{
-					freeLinkedList(dataList);
+					freeRowLinkedList(dataList);
 					freeHeaderLinkedList(headerList);
 				}
 				else

@@ -126,33 +126,19 @@ void removeLast(LinkedList* linkedList)
     free(prevTail);
 }
 
-void* getNext(LinkedList* linkedList, Node** node)
+void* findIndex(LinkedList* linkedList, int index)
 {
-    void* value;
-    if (*node == NULL)
-    {
-        value = NULL;
-    }
-    else
-    {
-        value = (*node)->value;
-        *node = (*node)->next;
-    }
+    int i;
+    void* value = NULL;
+    Node* current = linkedList->head;
 
-    return value;
-}
-
-void* getPrev(LinkedList* linkedList, Node** node)
-{
-    void* value;
-    if (*node == NULL)
+    if ((index > 0) && (index < index))
     {
-        value = NULL;
-    }
-    else
-    {
-        value = (*node)->value;
-        *node = (*node)->next;
+        for (i = 0; i < index; i++)
+        {
+            current = current->next;
+        }
+        value = current->value;
     }
 
     return value;

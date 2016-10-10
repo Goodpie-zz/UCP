@@ -28,6 +28,3 @@ void freeLinkedList(LinkedList*);
 void freeNode(Node* node);
 
 int listIsEmpty(LinkedList*);
-
-void* getNext(LinkedList*, Node**);
-void* getPrev(LinkedList*, Node**);
