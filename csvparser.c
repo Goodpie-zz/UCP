@@ -87,7 +87,6 @@ int defineHeaders(char* line, LinkedList* headers)
             if (sscanf(token, "%s (%[^)])", header->name, header->type) == 2)
             {
                 /* Insert into headers list */
-                /* TODO: Handle issue where some headers pass but one doesn't */
                 insertLast(headers, header);
                 headersAddded += 1;
             }
