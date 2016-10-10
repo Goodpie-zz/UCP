@@ -16,6 +16,7 @@ void freeCSVLinkedList(LinkedList*);
 int defineHeaders(char*, LinkedList*);
 char* determineHeaderType(char*);
 int addHeaderFromToken(LinkedList*, char*);
+int validateHeaderType(char*);
 
 void freeHeaderLinkedList(LinkedList*);
 void freeHeader(HeaderInfo*);

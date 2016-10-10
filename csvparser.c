@@ -126,19 +126,70 @@ int addHeaderFromToken(LinkedList* headers, char* token)
          /* Check we are getting the correct amount of values from token */
         if (sscanf(token, "%s (%[^)])", header->name, header->type) == 2)
         {
-            /* Insert into headers list */
-            insertLast(headers, header);
+            if (validateHeaderType(header->type))
+            {
+                /* Insert into headers list */
+                insertLast(headers, header);
+            }
+            else
+            {
+                printf("Invalid header type defined: %s\n", header->type);
+                freeHeader(header);
+                success = 0;
+            }
         }
         else
         {
             /* Invalid header parameters, free header and return fail */
-            fprintf("Invalid header format: %s", token);
+            printf("Invalid header format: %s\n", token);
             freeHeader(header);
             success = 0;
         }
     }
 
     return success;
+}
+
+/**
+ * SUBMODULE: validateHeaderType
+ * IMPORT: char* EXPORT: int
+ * Ensures that the header matches a valid type
+ */
+int validateHeaderType(char* type)
+{
+    int success = 0;
+
+    /* Check for valid types */
+    if (strcmp(type, "string") == 0)
+    {
+        success = 1;
+    }
+    else if (strcmp(type, "integer") == 0)
+    {
+        success = 1;
+    }
+
+    return success;
+}
+
+int parseLineToLinkedList(LinkedList* dataList, LinkedList* headerList, char* line)
+{
+    char* token;
+    int success = 1;
+    /* Tokenize the header line and get header definitions */
+    token = strtok(line, ",");
+    while (token != NULL && success == 1)
+    {
+
+        /* Continue tokenizing */
+        token = strtok(NULL, ",");
+    }
+    return success;
+}
+
+int validateCell(LinkedList* rowList, char* token)
+{
+    return 0;
 }
 
 /**
