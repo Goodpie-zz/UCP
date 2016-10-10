@@ -64,60 +64,79 @@ int defineHeaders(char* line, LinkedList* headers)
     int headersAddded = 0;
     char* token;
 
-    HeaderInfo* header;
-
     /* Tokenize the header line and get header definitions */
     token = strtok(line, ",");
     while (token != NULL && success == 1)
     {
-        /* Don't want to handle really long header names */
-        if (strlen(token) > MAX_STRING_LENGTH)
-        {
-            printf("Header information to long");
-            success = 0;
-        }
-        else
-        {
-            /* Can proceed with creating header information struct */
-            header = (HeaderInfo*) malloc(sizeof(HeaderInfo));
-            header->name = (char*) malloc(sizeof(char) * MAX_STRING_LENGTH);
-            header->type = (char*) malloc(sizeof(char) * MAX_STRING_LENGTH);
+        success = addHeaderFromToken(headers, token);
 
-            /* Check we are getting the correct amount of values from token */
-            if (sscanf(token, "%s (%[^)])", header->name, header->type) == 2)
+        /* Check if succeeded */
+        if (!success)
+        {
+            if (headersAddded == 0)
             {
-                /* Insert into headers list */
-                insertLast(headers, header);
-                headersAddded += 1;
+                /* Failed to add any header so free as LinkedList */
+                freeLinkedList(headers);
             }
             else
             {
-                /* Show error to user and exit */
-                printf("Invalid column header format: %s", token);
-                success = 0;
-                if (headersAddded > 0)
-                {
-                    freeHeaderLinkedList(headers);
-                    free(header->name);
-                    free(header->type);
-                    free(header);
-                }
+                /* Some headers have been added so call specialty free */
+                freeHeaderLinkedList(headers);
             }
         }
-
-        if (headersAddded == 0)
+        else
         {
-            freeLinkedList(headers);
-            free(header->name);
-            free(header->type);
-            free(header);
+            /* Added correctly so increment headers added */
+            headersAddded += 1;
         }
+
         /* Continue tokenizing */
         token = strtok(NULL, ",");
     }
 
-    free(line); /* No longer need line so free it */
-    success = success && (headersAddded > 0);
+    free(line);
+    return success;
+}
+
+/**
+ * SUBMODULE: addHeaderFromToken
+ * IMPORT: LinkedList*, char*
+ * EXPORT: int
+ * Adds a token representing a header to the linked list
+ * Returns bool representing success
+ */
+int addHeaderFromToken(LinkedList* headers, char* token)
+{
+    int success = 1;
+    HeaderInfo* header;
+
+    /* Don't want to handle really long header names */
+    if (strlen(token) > MAX_STRING_LENGTH)
+    {
+        printf("Header information to long\n");
+        success = 0;
+    }
+    else
+    {
+        /* Can proceed with creating header information struct */
+        header = (HeaderInfo*) malloc(sizeof(HeaderInfo));
+        header->name = (char*) malloc(sizeof(char) * MAX_STRING_LENGTH);
+        header->type = (char*) malloc(sizeof(char) * MAX_STRING_LENGTH);
+
+         /* Check we are getting the correct amount of values from token */
+        if (sscanf(token, "%s (%[^)])", header->name, header->type) == 2)
+        {
+            /* Insert into headers list */
+            insertLast(headers, header);
+        }
+        else
+        {
+            /* Invalid header parameters, free header and return fail */
+            fprintf("Invalid header format: %s", token);
+            freeHeader(header);
+            success = 0;
+        }
+    }
 
     return success;
 }
@@ -142,9 +161,7 @@ void freeHeaderLinkedList(LinkedList* linkedList)
 
         /* Cast value to HeaderInfo and free struct */
         value = (HeaderInfo*) node->value;
-        free(value->name);
-        free(value->type);
-        free(value);
+        freeHeader(value);
         free(node);
 
         node = nextNode;
@@ -152,4 +169,16 @@ void freeHeaderLinkedList(LinkedList* linkedList)
 
     /* Free LinkedList */
     free(linkedList);
+}
+
+/**
+ * SUBMODULE: freeHeader
+ * IMPORT: HeaderInfo* EXPORT: None
+ * Handles freeing a HeaderInfo struct pointer
+ */
+void freeHeader(HeaderInfo* header)
+{
+    free(header->name);
+    free(header->type);
+    free(header);
 }
