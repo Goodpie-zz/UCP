@@ -1,3 +1,3 @@
-void displayCorrectUsage();
+void usage(char*);
 
-int getIOFiles(char**, char*, char*); 
+int validateArguments(int, char**, char*, char*);

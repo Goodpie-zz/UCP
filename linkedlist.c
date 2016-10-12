@@ -3,143 +3,201 @@
 
 #include "linkedlist.h"
 
+/**
+ * SUBMODULE: createLinkedList
+ * IMPORT: None
+ * EXPORT: linkedList
+ * Creates a new linked list
+ */
 LinkedList* createLinkedList()
 {
-    LinkedList* linkedList;
-    Node* node;
+    LinkedList* linkedList = (LinkedList*) malloc(sizeof(LinkedList));
 
-    /* Assign memory to linked list */
-    linkedList = (LinkedList*) malloc(sizeof(LinkedList));
-
-    /* Assign memory to head node */
-    node = (Node*) malloc(sizeof(Node));
-    node->value = NULL;
-    node->prev = NULL;
-    node->next = NULL;
-
-    /* Assign default values */
-    linkedList->head = node;
-    linkedList->tail = node;
+    /* Default all values to null */
+    linkedList->head = NULL;
+    linkedList->tail = NULL;
     linkedList->size = 0;
 
     return linkedList;
 }
 
+/**
+ * SUBMODULE: insertFirst
+ * IMPORT: linkedList, value
+ * EXPORT: None
+ * Inserts an element into the head of the linked list
+ */
+void insertFirst(LinkedList* linkedList, void* value)
+{
+    /* Create a new node */
+    Node* newNode = (Node*) malloc(sizeof(Node));
+    newNode->value = value;
+    newNode->prev = NULL;
+
+    if (linkedListIsEmpty(linkedList))
+    {
+        /* First element, set as head and tail */
+        newNode->next = NULL;
+        linkedList->head = newNode;
+        linkedList->tail = newNode;
+    }
+    else
+    {
+        /* Swap places with prev head */
+        newNode->next = linkedList->head;
+        linkedList->head->prev = newNode;
+        linkedList->head = newNode;
+    }
+
+    /* Increment size */
+    linkedList->size += 1;
+}
+
+/**
+ * SUBMODULE: insertLast
+ * IMPORT: linkedList, value
+ * EXPORT: None
+ * Inserts an element into the tail of the linked list
+ */
+void insertLast(LinkedList* linkedList, void* value)
+{
+    /* Create a new node */
+    Node* newNode = (Node*) malloc(sizeof(Node));
+    newNode->value = value;
+    newNode->next = NULL;
+
+    if (linkedListIsEmpty(linkedList))
+    {
+        /* First element, insert first */
+        newNode->prev = NULL;
+        linkedList->head = newNode;
+        linkedList->tail = newNode;
+    }
+    else
+    {
+        /* Swap places with previous tail */
+        newNode->prev = linkedList->tail;
+        linkedList->tail->next = newNode;
+        linkedList->tail = newNode;
+    }
+
+    /* Increment size */
+    linkedList->size += 1;
+}
+
+/**
+ * SUBMODULE: removeFirst
+ * IMPORT: linkedList
+ * EXPORT: headNode
+ * Removes the head node from the linked list
+ */
+Node* removeFirst(LinkedList* linkedList)
+{
+    /* Default node to return */
+    Node* headNode = NULL;
+
+    if (!linkedListIsEmpty(linkedList))
+    {
+        headNode = linkedList->head;
+        /* Check not a single element list */
+        if (headNode->next != NULL)
+        {
+            headNode->next->prev = NULL;
+        }
+        linkedList->head = headNode->next;
+
+        /* Only decrement if we remove element */
+        linkedList->size -= 1;
+    }
+
+    return headNode;
+}
+
+/**
+ * SUBMODULE: removeLast
+ * IMPORT: linkedList
+ * EXPORT: tailNode
+ * Removes the tail node of the linked list
+ */
+Node* removeLast(LinkedList* linkedList)
+{
+    /* Default node to return */
+    Node* tailNode = NULL;
+
+    if (!linkedListIsEmpty(linkedList))
+    {
+        tailNode = linkedList->tail;
+        /* Check not a single element list */
+        if (tailNode->prev != NULL)
+        {
+            tailNode->prev->next = NULL;
+        }
+        linkedList->tail = tailNode->prev;
+
+        /* Only decrement if we remove an element */
+        linkedList->size -= 1;
+    }
+
+    return tailNode;
+}
+
+/**
+ * SUBMODULE: findIndex
+ * IMPORT: linkedList, index
+ * EXPORT: node
+ * Gets Node at index from linkedList
+ */
+Node* findIndex(LinkedList* linkedList, int index)
+{
+    Node* node = NULL;
+    int count;
+
+    /* Check index in range */
+    if ((index < linkedList->size) && (index >= 0))
+    {
+        count = 0;
+        node = linkedList->head;
+        while (count < index)
+        {
+            node = node->next;
+            count ++;
+        }
+    }
+
+    return node;
+
+}
+
+/**
+ * SUBMODULE: linkedListIsEmpty
+ * IMPORT: linkedList
+ * EXPORT: (int) boolean
+ * Function more for readability
+ */
+int linkedListIsEmpty(LinkedList* linkedList)
+{
+    return linkedList->size == 0;
+}
+
+/**
+ * SUBMODULE: freeLinkedList
+ * IMPORT: LinkedList* linkedList
+ * EXPORT: None
+ * Frees all elements within the linkedList
+ */
 void freeLinkedList(LinkedList* linkedList)
 {
-    Node *node, *nextNode;
-    node = linkedList->head;
+    Node *currentNode, *nextNode;
+    currentNode = linkedList->head;
 
-    while (node != NULL)
+    /* Iterate through the list */
+    while (currentNode != NULL)
     {
-        nextNode = node->next;
-        free(node->value);
-        free(node);
-        node = nextNode;
+        nextNode = currentNode->next;
+        free(currentNode->value);
+        free(currentNode);
+        currentNode = nextNode;
     }
 
     free(linkedList);
-}
-
-void insertFirst(LinkedList* linkedList, void* value)
-{
-    Node* node;
-    Node* prevHead = linkedList->head;
-
-    if (linkedList->size == 0)
-    {
-        prevHead->value = value;
-        prevHead->prev = NULL;
-        prevHead->next = NULL;
-    }
-    else
-    {
-        node = (Node*) malloc(sizeof(Node));
-        node->next = prevHead;
-        node->prev = NULL;
-
-        prevHead->prev = node;
-
-        linkedList->head = node;
-    }
-
-    linkedList->size += 1;
-}
-
-void insertLast(LinkedList* linkedList, void* value)
-{
-    Node* node;
-    Node* prevTail = linkedList->tail;
-
-    if (linkedList->size == 0)
-    {
-        insertFirst(linkedList, value);
-    }
-    else
-    {
-        node = (Node*) malloc(sizeof(Node));
-        node->next = NULL;
-        node->value = value;
-        node->prev = NULL;
-
-        prevTail->next = node;
-
-        linkedList->tail = node;
-    }
-
-    linkedList->size += 1;
-}
-
-void* peekFirst(LinkedList* linkedList)
-{
-    return linkedList->head->value;
-}
-
-void* peekLast(LinkedList* linkedList)
-{
-    return linkedList->tail->value;
-}
-
-void removeFirst(LinkedList* linkedList)
-{
-    Node* prevHead = linkedList->head;
-
-    prevHead->next->prev = NULL;
-    linkedList->head = prevHead->next;
-
-    linkedList->size -= 1;
-
-    free(prevHead->value);
-    free(prevHead);
-}
-
-void removeLast(LinkedList* linkedList)
-{
-    Node* prevTail = linkedList->tail;
-
-    prevTail->prev->next = NULL;
-    linkedList->tail = prevTail->prev;
-
-    linkedList->size -= 1;
-
-    free(prevTail->value);
-    free(prevTail);
-}
-
-void* findIndex(LinkedList* linkedList, int index)
-{
-    int i;
-    void* value = NULL;
-    Node* current = linkedList->head;
-
-    if ((index > 0) && (index < index))
-    {
-        for (i = 0; i < index; i++)
-        {
-            current = current->next;
-        }
-        value = current->value;
-    }
-
-    return value;
 }
