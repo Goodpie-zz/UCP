@@ -1,5 +1,4 @@
 test (integer), test2 (string), test3 (string)
-asdas, asdsa, asdsa, asdas
-asdass, asdas, asdsa, asdas
-asddsa
-asdsda
+1, asdsd, adsdsa
+2, asddsa, asddsa
+3, asddsa, asddsa
