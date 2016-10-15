@@ -28,6 +28,12 @@ int main(int argc, char* argv[])
     return 0;
 }
 
+/**
+ * SUBMODULE: testLinkedList
+ * IMPORT: None
+ * EXPORT: int
+ * Tests linked list functionality
+ */
 int testLinkedList()
 {
     LinkedList* linkedList;
@@ -46,14 +52,20 @@ int testLinkedList()
     removeFirstPass = testRemoveFirst(linkedList);
     printf("\tTesting remove last...\n");
     removeLastPass = testRemoveLast(linkedList);
-    
+
     printf("\tTesting free linked list...\n");
     freeLinkedList(linkedList);
 
-    return removeFirstPass && removeLastPass; 
-    
+    return removeFirstPass && removeLastPass;
+
 }
 
+/**
+ * SUBMODULE: testPopulate
+ * IMPORT: LinkedList* linkedList, int count
+ * EXPORT: None
+ * Populates linked list with strings for testing purposes
+ */
 void testPopulate(LinkedList* linkedList, int count)
 {
     char* value;
@@ -67,6 +79,13 @@ void testPopulate(LinkedList* linkedList, int count)
     }
 }
 
+
+/**
+ * SUBMODULE: testRemoveLast
+ * IMPORT: LinkedList*
+ * EXPORT: int success
+ * Tests the remove first functionality of populated and empty linked list
+ */
 int testRemoveFirst(LinkedList* testList)
 {
     int success = 1;
@@ -97,6 +116,13 @@ int testRemoveFirst(LinkedList* testList)
     return success;
 }
 
+
+/**
+ * SUBMODULE: testRemoveLast
+ * IMPORT: LinkedList* linkedList
+ * EXPORT: int success
+ * Tests the remove last functionality of populated and empty linked list
+ */
 int testRemoveLast(LinkedList* linkedList)
 {
     int success = 1;

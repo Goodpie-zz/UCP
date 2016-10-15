@@ -5,264 +5,257 @@
 #include "csvparser.h"
 #include "filereader.h"
 
-#define MAX_STRING_LENGTH 4096
+#define MAX_HEADER_LENGTH 4096
 
 /**
  * SUBMODULE: parseCSV
- * IMPORT: FILE*, LinkedList**, LinkedList**
+ * IMPORT: FILE* inFile, LinkedList* dataList, LinkedList* headerList
  * EXPORT: int
- * Takes an infile and parses it into two seperate linked lists
+ * Parses CSV file defined by assignment guidelines
  */
-int parseCSV(FILE* inFile, LinkedList** dataList, LinkedList** headerList)
+int parseCSV(FILE* inFile, LinkedList** outerDataList, LinkedList** headerList)
 {
-    /* vars for handling information about the CSV file */
-    int currentLine = 1;
+    int headerParseSuccess = 1, dataParseSuccess = 1;
     int endOfFile = 0;
-    int headerPass = 1;
-    int linePass = 1;
 
     char* line = NULL;
 
-    /* Create default linked lists for assigning values */
-    *dataList = createLinkedList();
+    /* Initiate linked lists */
+    *outerDataList = createLinkedList();
     *headerList = createLinkedList();
 
-    /* Loop through file until error or EOF */
-    while ((endOfFile == 0) && (headerPass == 1))
+    /* First parse header information */
+    line = readLine(inFile, &endOfFile);
+    headerParseSuccess = parseHeaderLine(line, *headerList);
+
+    /* Loop through rest of file to parse each line */
+    if (headerParseSuccess)
     {
-        line = readLine(inFile, &endOfFile);
-        if (currentLine == 1)
+        while ((endOfFile) && (dataParseSuccess))
         {
-            /* Header, insert into header list */
-            headerPass = defineHeaders(line, *headerList);
-        }
-        else
-        {
-            /* Not header, insert into data list */
-            linePass = parseLineToLinkedList(*dataList, *headerList, line);
-        }
-        currentLine += 1;
-    }
-
-    if (!headerPass)
-    {
-        freeLinkedList(*dataList);
-        printf("Error: Failed to parse headers in CSV file\n");
-    }
-
-    if (!linePass)
-    {
-        if (currentLine < 3)
-        {
-            freeRowLinkedList(*dataList);
-        }
-        else
-        {
-            freeLinkedList(*dataList);
-        }
-    }
-
-    return headerPass;
-}
-
-/**
- * SUBMODULE: defineHeaders
- * IMPORT: char*, LinkedList*
- * EXPORT: int
- * Reads a line containing headers and adds them to linked list
- */
-int defineHeaders(char* line, LinkedList* headers)
-{
-    int success = 1;
-    int headersAddded = 0;
-    char* token;
-
-    /* Tokenize the header line and get header definitions */
-    token = strtok(line, ",");
-    while (token != NULL && success == 1)
-    {
-        success = addHeaderFromToken(headers, token);
-
-        /* Check if succeeded */
-        if (!success)
-        {
-            if (headersAddded == 0)
-            {
-                /* Failed to add any header so free as LinkedList */
-                freeLinkedList(headers);
-            }
-            else
-            {
-                /* Some headers have been added so call specialty free */
-                freeHeaderLinkedList(headers);
-            }
-        }
-        else
-        {
-            /* Added correctly so increment headers added */
-            headersAddded += 1;
+            line = readLine(inFile, &endOfFile);
+            dataParseSuccess = parseDataLine(line, *outerDataList, *headerList);
         }
 
-        /* Continue tokenizing */
-        token = strtok(NULL, ",");
-    }
-
-    free(line);
-    return success;
-}
-
-/**
- * SUBMODULE: addHeaderFromToken
- * IMPORT: LinkedList*, char*
- * EXPORT: int
- * Adds a token representing a header to the linked list
- * Returns bool representing success
- */
-int addHeaderFromToken(LinkedList* headers, char* token)
-{
-    int success = 1;
-    HeaderInfo* header;
-
-    /* Don't want to handle really long header names */
-    if (strlen(token) > MAX_STRING_LENGTH)
-    {
-        printf("Header information to long\n");
-        success = 0;
+        if (!dataParseSuccess)
+        {
+            printf("Failed to read in data from CSV file. Invalid format");
+            freeOuterLinkedList(*outerDataList);
+        }
     }
     else
     {
-        /* Can proceed with creating header information struct */
-        header = (HeaderInfo*) malloc(sizeof(HeaderInfo));
-        header->name = (char*) malloc(sizeof(char) * MAX_STRING_LENGTH);
-        header->type = (char*) malloc(sizeof(char) * MAX_STRING_LENGTH);
-
-         /* Check we are getting the correct amount of values from token */
-        if (sscanf(token, "%s (%[^)])", header->name, header->type) == 2)
-        {
-            if (validateHeaderType(header->type))
-            {
-                /* Insert into headers list */
-                insertLast(headers, header);
-            }
-            else
-            {
-                printf("Invalid header type defined: %s\n", header->type);
-                freeHeader(header);
-                success = 0;
-            }
-        }
-        else
-        {
-            /* Invalid header parameters, free header and return fail */
-            printf("Invalid header format: %s\n", token);
-            freeHeader(header);
-            success = 0;
-        }
+        printf("Failed to read header file");
+        freeHeaderLinkedList(*headerList);
+        freeOuterLinkedList(*outerDataList);
     }
 
-    return success;
+    return headerParseSuccess && dataParseSuccess;
+
 }
 
 /**
- * SUBMODULE: validateHeaderType
- * IMPORT: char* EXPORT: int
- * Ensures that the header matches a valid type
+ * SUBMODULE: parseHeaderLine
+ * IMPORT: char* line, LinkedList* headerList
+ * EXPORT: None
+ * Loops through header for header tokens and adds to headerList
  */
-int validateHeaderType(char* type)
+int parseHeaderLine(char* line, LinkedList* headerList)
 {
-    int success = 0;
-
-    /* Check for valid types */
-    if (strcmp(type, "string") == 0)
-    {
-        success = 1;
-    }
-    else if (strcmp(type, "integer") == 0)
-    {
-        success = 1;
-    }
-
-    return success;
-}
-
-int parseLineToLinkedList(LinkedList* dataList, LinkedList* headerList, char* line)
-{
-    char* token;
-    int tmpInteger;
     int success = 1;
 
-    int headerIndex = 0;
-    HeaderInfo* currentHeader;
-
-    LinkedList* rowLinkedList = createLinkedList();
-
-    /* Tokenize the header line and get header definitions */
-    token = strtok(line, ",");
-    while (token != NULL && success == 1)
+    /* Tokenize line and validate each token */
+    char* token = strtok(line, ",");
+    while ((token != NULL) && (success == 1))
     {
-        currentHeader = (HeaderInfo*) findIndex(headerList, headerIndex);
-        if (currentHeader != NULL)
-        {
-            if (strcmp(currentHeader->type, "string") == 0)
-            {
-                insertLast(rowLinkedList, token);
-            }
-            else if (strcmp(currentHeader->type, "integer") == 0)
-            {
-                if (sscanf(token, "%d", &tmpInteger) == 1)
-                {
-                    insertLast(rowLinkedList, &tmpInteger);
-                }
-                else
-                {
-                    success = 0;
-                }
-            }
-        }
-        else
-        {
-            success = 0;
-        }
+        /* Validate and add to linked list */
+        success = validateHeader(token, headerList);
 
-        /* Continue tokenizing */
+        /* Next token */
         token = strtok(NULL, ",");
-
-        headerIndex += 1;
     }
-
-    insertLast(dataList, rowLinkedList);
 
     free(line);
 
     return success;
 }
 
-void freeRowLinkedList(LinkedList* linkedList)
+/**
+ * SUBMODULE: validateHeader
+ * IMPORT: char* token, LinkedList* headerList
+ * EXPORT: int success
+ * Ensures the header is valid and adds it to linked list if true
+ */
+int validateHeader(char* token, LinkedList* headerList)
 {
-    Node *outerNode, *outerNextNode;
+    HeaderInfo* headerInfo;
 
-    LinkedList* innerList;
-    Node *innerNode, *innerNextNode;
-    outerNode = linkedList->head;
+    int success = 0;
+    int validType;
 
-    while (outerNode != NULL)
+    headerInfo = (HeaderInfo*) malloc(sizeof(HeaderInfo));
+    headerInfo->name = malloc(sizeof(char) * MAX_HEADER_LENGTH);
+    headerInfo->type = malloc(sizeof(char) * MAX_HEADER_LENGTH);
+
+    if (strlen(token) < (MAX_HEADER_LENGTH * 2))
     {
-        outerNextNode = outerNode->next;
-
-        innerList = (LinkedList*) outerNode->value;
-        innerNode = innerList->head;
-        while (innerNode != NULL)
+        /* String split into <name> (<type>) */
+        if (sscanf(token, "%s (%[^)])", headerInfo->name, headerInfo->type) == 2)
         {
-            innerNextNode = innerNode->next;
-            free(innerNode);
-            innerNode = innerNextNode;
+            validType = validateType(headerInfo->type);
+            if (validType)
+            {
+                /* Insert into the last element of linked list */
+                insertLast(headerList, headerInfo);
+                success = 1;
+            }
+            else
+            {
+                printf("Invalid header type: %s\n", headerInfo->type);
+            }
         }
-        free(innerList);
-
-        free(outerNode);
-        outerNode = outerNextNode;
+        else
+        {
+            printf("Invalid header item: %s\n",  token);
+        }
     }
-    free(linkedList);
+
+    if (!success)
+    {
+        free(headerInfo->name);
+        free(headerInfo->type);
+        free(headerInfo);
+    }
+
+    return success;
+}
+
+/**
+ * SUBMODULE: validateType
+ * IMPORT: char* type
+ * EXPORT: int valid
+ * Validates the header type to ensure it is string or integer
+ */
+int validateType(char* type)
+{
+    int valid = 0;
+
+    /* Only valid options are integer and string */
+    if ((strcmp(type, "string") == 0) || (strcmp(type, "integer") == 0))
+        valid = 1;
+
+    return valid;
+}
+
+/**
+ * SUBMODULE: parseDataLine
+ * IMPORT: char* line, LinkedList* outerDataList, LinkedList* headerList
+ * EXPORT: int success
+ * Validates the data line and adds it to out linked list
+ */
+int parseDataLine(char* line, LinkedList* outerDataList, LinkedList* headerList)
+{
+    int success = 1;
+
+    LinkedList* dataList = createLinkedList();
+
+    Node* currentHeader = headerList->head;
+    HeaderInfo* headerInfo;
+
+
+    char* token = strtok(line, ",");
+    while (token != NULL && success == 1)
+    {
+        /* Ensure the node isn't null */
+        if (currentHeader != NULL)
+        {
+            /* Get the current header type for validation */
+            headerInfo = (HeaderInfo*) currentHeader->value;
+
+            /* Check type of string or empty int */
+            if (strcmp(headerInfo->type, "string") == 0 || strlen(token) == 0)
+            {
+                /* String is already valid, just copy string */
+                validateStringData(token, dataList);
+                success = 1;
+            }
+            else if (strcmp(headerInfo->type, "integer") == 0)
+            {
+                /* Ensure the int data can be converted nicely */
+                success = validateIntData(token, dataList);
+            }
+            else
+            {
+                printf("Cannot convert %s to %s", token, headerInfo->type);
+                success = 0;
+            }
+
+            /* Next token */
+            strtok(NULL, ",");
+        }
+        else
+        {
+            /* More data than headers? */
+            printf("Invalid CSV file format");
+            success = 0;
+        }
+
+    }
+
+    free(line);
+
+    if (success)
+    {
+        insertLast(outerDataList, dataList);
+    }
+    else
+    {
+        freeLinkedList(dataList);
+    }
+
+    return success;
+
+}
+
+/**
+ * SUBMODULE: validateIntData
+ * IMPORT: char* token, LinkedList* dataList
+ * EXPORT: int success
+ * Ensures the int provided can be nicely converted to int
+ */
+int validateIntData(char* token, LinkedList* dataList)
+{
+    int success = 0;
+    int* intValue;
+
+    intValue = (int*) malloc(sizeof(int));
+    if (sscanf(token, "%d", intValue) == 1)
+    {
+        insertLast(dataList, intValue);
+        success = 1;
+    }
+
+    return success;
+}
+
+/**
+ * SUBMODULE: validateStringData
+ * IMPORT: char* token, LinkedList* dataList
+ * EXPORT: None
+ * Copies the string to a memory allocation and adds it to linked list
+ */
+void validateStringData(char* token, LinkedList* dataList)
+{
+    char* strValue;
+
+    /* Allocate memory for value in linked list */
+    strValue = (char*) malloc(sizeof(char) * strlen(token) + 1);
+
+    /* Copy string */
+    strcpy(strValue, token);
+
+    /* Insert into the last element of the linked list */
+    insertLast(dataList, strValue);
 }
 
 /**
@@ -277,22 +270,30 @@ void freeHeaderLinkedList(LinkedList* linkedList)
     Node *node, *nextNode;
     node = linkedList->head;
 
-    /* Traverse list until last value (where next is NULL) */
-    while (node != NULL)
+    if (linkedListIsEmpty(linkedList))
     {
-        /* Temporarily assign next node */
-        nextNode = node->next;
+        freeLinkedList(linkedList);
+    }
+    else
+    {
+        /* Traverse list until last value (where next is NULL) */
+        while (node != NULL)
+        {
+            /* Temporarily assign next node */
+            nextNode = node->next;
 
-        /* Cast value to HeaderInfo and free struct */
-        value = (HeaderInfo*) node->value;
-        freeHeader(value);
-        free(node);
+            /* Cast value to HeaderInfo and free struct */
+            value = (HeaderInfo*) node->value;
+            freeHeader(value);
+            free(node);
 
-        node = nextNode;
+            node = nextNode;
+        }
+
+        /* Free LinkedList */
+        free(linkedList);
     }
 
-    /* Free LinkedList */
-    free(linkedList);
 }
 
 /**
@@ -305,4 +306,40 @@ void freeHeader(HeaderInfo* header)
     free(header->name);
     free(header->type);
     free(header);
+}
+
+
+void freeOuterLinkedList(LinkedList* linkedList)
+{
+    Node *outerNode, *outerNextNode;
+    LinkedList* innerList;
+
+    if (linkedListIsEmpty(linkedList))
+    {
+        freeLinkedList(linkedList);
+    }
+    else
+    {
+        Node *innerNode, *innerNextNode;
+        outerNode = linkedList->head;
+
+        while (outerNode != NULL)
+        {
+            outerNextNode = outerNode->next;
+
+            innerList = (LinkedList*) outerNode->value;
+            innerNode = innerList->head;
+            while (innerNode != NULL)
+            {
+                innerNextNode = innerNode->next;
+                free(innerNode);
+                innerNode = innerNextNode;
+            }
+            free(innerList);
+
+            free(outerNode);
+            outerNode = outerNextNode;
+        }
+        free(linkedList);
+    }
 }

@@ -6,7 +6,6 @@
 #include "csvparser.h"
 #include "filereader.h"
 
-
 /* Assuming file name can only have a max of 255 chars */
 #define MAX_FILENAME_SIZE 255
 
@@ -22,8 +21,8 @@ int main(int argc, char* argv[])
     int validInFile, validOutFile;
     char inFileName[MAX_FILENAME_SIZE], outFileName[MAX_FILENAME_SIZE];
 
-    LinkedList *dataList = NULL;
-    LinkedList *headerList = NULL;
+    LinkedList* dataList = NULL;
+    LinkedList* headerList = NULL;
 
     if (validateArguments(argc, argv, inFileName, outFileName))
     {
@@ -36,7 +35,7 @@ int main(int argc, char* argv[])
         {
             if (parseCSV(inFile, &dataList, &headerList))
             {
-                freeRowLinkedList(dataList);
+                freeOuterLinkedList(dataList);
                 freeHeaderLinkedList(headerList);
             }
             else

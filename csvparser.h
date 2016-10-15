@@ -11,16 +11,20 @@ typedef struct
 
 int parseCSV(FILE*, LinkedList**, LinkedList**);
 
-void freeCSVLinkedList(LinkedList*);
+int parseHeaderLine(char*, LinkedList*);
 
-int defineHeaders(char*, LinkedList*);
-char* determineHeaderType(char*);
-int addHeaderFromToken(LinkedList*, char*);
-int validateHeaderType(char*);
+int validateHeader(char*, LinkedList*);
 
-int parseLineToLinkedList(LinkedList*, LinkedList*, char*);
+int validateType(char*);
+
+int parseDataLine(char*, LinkedList*, LinkedList*);
+
+int validateIntData(char* token, LinkedList*);
+
+void validateStringData(char*, LinkedList*);
 
 void freeHeaderLinkedList(LinkedList*);
+
 void freeHeader(HeaderInfo*);
 
-void freeRowLinkedList(LinkedList*);
+void freeOuterLinkedList(LinkedList*);
