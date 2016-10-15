@@ -31,7 +31,7 @@ int parseCSV(FILE* inFile, LinkedList** outerDataList, LinkedList** headerList)
     /* Loop through rest of file to parse each line */
     if (headerParseSuccess)
     {
-        while ((endOfFile) && (dataParseSuccess))
+        while ((!endOfFile) && (dataParseSuccess))
         {
             line = readLine(inFile, &endOfFile);
             dataParseSuccess = parseDataLine(line, *outerDataList, *headerList);
@@ -162,7 +162,6 @@ int parseDataLine(char* line, LinkedList* outerDataList, LinkedList* headerList)
     Node* currentHeader = headerList->head;
     HeaderInfo* headerInfo;
 
-
     char* token = strtok(line, ",");
     while (token != NULL && success == 1)
     {
@@ -177,7 +176,6 @@ int parseDataLine(char* line, LinkedList* outerDataList, LinkedList* headerList)
             {
                 /* String is already valid, just copy string */
                 validateStringData(token, dataList);
-                success = 1;
             }
             else if (strcmp(headerInfo->type, "integer") == 0)
             {
@@ -191,7 +189,7 @@ int parseDataLine(char* line, LinkedList* outerDataList, LinkedList* headerList)
             }
 
             /* Next token */
-            strtok(NULL, ",");
+            token = strtok(NULL, ",");
         }
         else
         {
@@ -199,6 +197,8 @@ int parseDataLine(char* line, LinkedList* outerDataList, LinkedList* headerList)
             printf("Invalid CSV file format");
             success = 0;
         }
+
+        currentHeader = currentHeader->next;
 
     }
 
@@ -328,16 +328,10 @@ void freeOuterLinkedList(LinkedList* linkedList)
             outerNextNode = outerNode->next;
 
             innerList = (LinkedList*) outerNode->value;
-            innerNode = innerList->head;
-            while (innerNode != NULL)
-            {
-                innerNextNode = innerNode->next;
-                free(innerNode);
-                innerNode = innerNextNode;
-            }
-            free(innerList);
 
+            freeLinkedList(innerList);
             free(outerNode);
+
             outerNode = outerNextNode;
         }
         free(linkedList);

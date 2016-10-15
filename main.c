@@ -9,6 +9,8 @@
 /* Assuming file name can only have a max of 255 chars */
 #define MAX_FILENAME_SIZE 255
 
+void displayOuterList(LinkedList*, LinkedList*);
+
 /**
  * SUBMODULE: main
  * IMPORT: argc, argv[]
@@ -35,6 +37,7 @@ int main(int argc, char* argv[])
         {
             if (parseCSV(inFile, &dataList, &headerList))
             {
+                displayOuterList(headerList, dataList);
                 freeOuterLinkedList(dataList);
                 freeHeaderLinkedList(headerList);
             }
@@ -122,4 +125,41 @@ int validateArguments(int argc, char** argv, char* inFileName,
 void usage(char* error)
 {
     printf("%s\nCorrect Usage: ./main i <infile> o <outfile>", error);
+}
+
+void displayOuterList(LinkedList* headerList, LinkedList* outerList)
+{
+    Node* headerCurrentNode;
+    Node* outerCurrentNode;
+
+    LinkedList* innerList;
+    Node* innerCurrentNode;
+    HeaderInfo* headerInfo;
+
+    int* tmp;
+    outerCurrentNode = outerList->head;
+
+    while (outerCurrentNode != NULL)
+    {
+        innerList = (LinkedList*) outerCurrentNode->value;
+        innerCurrentNode = innerList->head;
+        headerCurrentNode = headerList->head;
+
+        while (innerCurrentNode != NULL)
+        {
+            headerInfo = (HeaderInfo*) headerCurrentNode->value;
+            if (strcmp(headerInfo->type, "string") == 0)
+            {
+                printf("%s", (char*) innerCurrentNode->value);
+            }
+            else if (strcmp(headerInfo->type, "integer") == 0)
+            {
+                printf("%d", *(int*) innerCurrentNode->value);
+            }
+            innerCurrentNode = innerCurrentNode->next;
+            headerCurrentNode = headerCurrentNode->next;
+        }
+
+        outerCurrentNode = outerCurrentNode->next;
+    }
 }

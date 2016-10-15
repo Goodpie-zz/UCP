@@ -147,3 +147,4 @@ int testRemoveLast(LinkedList* linkedList)
 
     return success;
 }
+
