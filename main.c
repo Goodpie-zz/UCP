@@ -29,6 +29,7 @@ int main(int argc, char* argv[])
 {
     FILE *inFile, *outFile;
     int validInFile, validOutFile;
+    int sortOption;
     char inFileName[MAX_FILENAME_SIZE], outFileName[MAX_FILENAME_SIZE];
 
     LinkedList* dataList = NULL;
@@ -45,6 +46,7 @@ int main(int argc, char* argv[])
         {
             if (parseCSV(inFile, &dataList, &headerList))
             {
+                sortOption = displayMenu(headerList);
                 displayOuterList(headerList, dataList);
                 freeOuterLinkedList(dataList);
                 freeHeaderLinkedList(headerList);
@@ -124,6 +126,62 @@ int validateArguments(int argc, char** argv, char* inFileName,
 }
 
 /**
+ * SUBMODULE: displayMenu
+ * IMPORT: LinkedList* headerList
+ * EXPORT: int choice
+ * Displays menu and gets user input on their sorting method preference
+ */
+int displayMenu(LinkedList* headerList)
+{
+    Node* currentNode;
+    HeaderInfo* headerInfo;
+    int i, c;
+    int choice = -1;
+    
+    while ((choice <= 0) || (choice > headerList->size))
+    {   
+        i = 1;
+        /* display nice interface to user */
+        printf("\nWhat would you like to sort the data by: \n");
+        printf("________________________________________ \n\n");
+
+        /* List through headers and display names of each as menu options */
+        currentNode = headerList->head;
+        while (currentNode != NULL)
+        {
+            headerInfo = (HeaderInfo*) currentNode->value;
+            printf("%d) %s\n", i, headerInfo->name);
+            i ++;
+            currentNode = currentNode->next;
+        }
+
+        /* Check valid input */
+        printf("\nEnter an option between 1-%d: \n", i-1);
+        if (scanf("%d", &choice) == 1)
+        {
+            if ((choice <= 0) || (choice > headerList->size))
+            {
+                printf("\nInvalid choice: %d\n", choice);
+            }
+        }
+        else
+        {
+            printf("\nInvalid choice. Please enter an integer\n");
+            choice = -1;
+
+            /* Clear buffer due to incorrect input */
+            while ((c = getchar() != '\n') && (c != EOF));
+        }
+    }
+
+    /* Return actual index */
+    return choice - 1;
+
+}
+
+
+
+/**
  * SUBMODULE: usage
  * IMPORT: error
  * EXPORT: None
@@ -144,7 +202,6 @@ void displayOuterList(LinkedList* headerList, LinkedList* outerList)
     Node* innerCurrentNode;
     HeaderInfo* headerInfo;
 
-    int* tmp;
     outerCurrentNode = outerList->head;
 
     while (outerCurrentNode != NULL)
@@ -152,6 +209,8 @@ void displayOuterList(LinkedList* headerList, LinkedList* outerList)
         innerList = (LinkedList*) outerCurrentNode->value;
         innerCurrentNode = innerList->head;
         headerCurrentNode = headerList->head;
+
+        printf("\n");
 
         while (innerCurrentNode != NULL)
         {

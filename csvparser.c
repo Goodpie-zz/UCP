@@ -327,14 +327,13 @@ void freeOuterLinkedList(LinkedList* linkedList)
 {
     Node *outerNode, *outerNextNode;
     LinkedList* innerList;
-
+    
     if (linkedListIsEmpty(linkedList))
     {
         freeLinkedList(linkedList);
     }
     else
     {
-        Node *innerNode, *innerNextNode;
         outerNode = linkedList->head;
 
         while (outerNode != NULL)
