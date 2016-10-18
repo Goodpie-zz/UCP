@@ -1,3 +1,11 @@
+ /**
+ * FILE:        main.c
+ * AUTHOR:      Brandyn Britton
+ * USERNAME:    18265716
+ * UNIT:        UCP
+ * PURPOSE:
+ * COMMENTS:
+ */
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -154,11 +162,20 @@ void displayOuterList(LinkedList* headerList, LinkedList* outerList)
             }
             else if (strcmp(headerInfo->type, "integer") == 0)
             {
-                printf("%d", *(int*) innerCurrentNode->value);
+                if (innerCurrentNode->value != NULL)
+                {
+                    printf("%d,", *(int*) innerCurrentNode->value);
+                }
+                else
+                {
+                    printf(" ,");
+                }
             }
             innerCurrentNode = innerCurrentNode->next;
             headerCurrentNode = headerCurrentNode->next;
         }
+
+        printf("\n");
 
         outerCurrentNode = outerCurrentNode->next;
     }

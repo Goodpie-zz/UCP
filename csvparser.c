@@ -39,13 +39,14 @@ int parseCSV(FILE* inFile, LinkedList** outerDataList, LinkedList** headerList)
 
         if (!dataParseSuccess)
         {
-            printf("Failed to read in data from CSV file. Invalid format");
+            printf("Failed to read in data from CSV file. Invalid format\n");
+            freeHeaderLinkedList(*headerList);
             freeOuterLinkedList(*outerDataList);
         }
     }
     else
     {
-        printf("Failed to read header file");
+        printf("Failed to read header file\n");
         freeHeaderLinkedList(*headerList);
         freeOuterLinkedList(*outerDataList);
     }
@@ -100,7 +101,8 @@ int validateHeader(char* token, LinkedList* headerList)
     if (strlen(token) < (MAX_HEADER_LENGTH * 2))
     {
         /* String split into <name> (<type>) */
-        if (sscanf(token, "%s (%[^)])", headerInfo->name, headerInfo->type) == 2)
+        if (sscanf(token, "%s (%[^)])",
+            headerInfo->name, headerInfo->type) == 2)
         {
             validType = validateType(headerInfo->type);
             if (validType)
@@ -171,8 +173,8 @@ int parseDataLine(char* line, LinkedList* outerDataList, LinkedList* headerList)
             /* Get the current header type for validation */
             headerInfo = (HeaderInfo*) currentHeader->value;
 
-            /* Check type of string or empty int */
-            if (strcmp(headerInfo->type, "string") == 0 || strlen(token) == 0)
+            
+            if (strcmp(headerInfo->type, "string") == 0)
             {
                 /* String is already valid, just copy string */
                 validateStringData(token, dataList);
@@ -180,7 +182,15 @@ int parseDataLine(char* line, LinkedList* outerDataList, LinkedList* headerList)
             else if (strcmp(headerInfo->type, "integer") == 0)
             {
                 /* Ensure the int data can be converted nicely */
-                success = validateIntData(token, dataList);
+                /* Check type of string or empty int */
+                if (strcmp(token, " ") == 0)
+                {
+                    insertLast(dataList, NULL);
+                }
+                else
+                {
+                    success = validateIntData(token, dataList);
+                }
             }
             else
             {
@@ -233,6 +243,10 @@ int validateIntData(char* token, LinkedList* dataList)
     {
         insertLast(dataList, intValue);
         success = 1;
+    }
+    else
+    {
+        free(intValue);
     }
 
     return success;

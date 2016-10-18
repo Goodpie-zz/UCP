@@ -194,7 +194,10 @@ void freeLinkedList(LinkedList* linkedList)
     while (currentNode != NULL)
     {
         nextNode = currentNode->next;
-        free(currentNode->value);
+        if (currentNode->value != NULL)
+        {
+            free(currentNode->value);
+        }
         free(currentNode);
         currentNode = nextNode;
     }

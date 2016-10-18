@@ -1,1 +1,3 @@
-meme (int), fail
+meme (integer), fail (integer), fai (integer)
+1, , 12302310
+ , , 122123`
