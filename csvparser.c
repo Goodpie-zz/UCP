@@ -5,6 +5,7 @@
 #include "csvparser.h"
 #include "filereader.h"
 #include "headerinfo.h"
+#include "boolean.h"
 
 #define MAX_HEADER_LENGTH 4096
 
@@ -24,8 +25,8 @@ static void validateStringData(char*, LinkedList*);
  */
 int parseCSV(FILE* inFile, LinkedList** outerDataList, LinkedList** headerList)
 {
-    int headerParseSuccess = 1, dataParseSuccess = 1;
-    int endOfFile = 0;
+    int headerParseSuccess = TRUE, dataParseSuccess = TRUE;
+    int endOfFile = FALSE;
 
     char* line = NULL;
 
@@ -61,7 +62,6 @@ int parseCSV(FILE* inFile, LinkedList** outerDataList, LinkedList** headerList)
     }
 
     return headerParseSuccess && dataParseSuccess;
-
 }
 
 /**
@@ -72,11 +72,11 @@ int parseCSV(FILE* inFile, LinkedList** outerDataList, LinkedList** headerList)
  */
 int parseHeaderLine(char* line, LinkedList* headerList)
 {
-    int success = 1;
+    int success = TRUE;
 
     /* Tokenize line and validate each token */
     char* token = strtok(line, ",");
-    while ((token != NULL) && (success == 1))
+    while ((token != NULL) && (success == TRUE))
     {
         /* Validate and add to linked list */
         success = validateHeader(token, headerList);
@@ -85,6 +85,7 @@ int parseHeaderLine(char* line, LinkedList* headerList)
         token = strtok(NULL, ",");
     }
 
+    /* No longer need line, free it */
     free(line);
 
     return success;
@@ -100,9 +101,10 @@ int validateHeader(char* token, LinkedList* headerList)
 {
     HeaderInfo* headerInfo;
 
-    int success = 0;
-    int validType;
+    int success = FALSE;
+    int validType = TRUE;
 
+    /* Allocate memory for headerInfo */
     headerInfo = (HeaderInfo*) malloc(sizeof(HeaderInfo));
     headerInfo->name = (char*) malloc(sizeof(char) * MAX_HEADER_LENGTH);
     headerInfo->type = (char*) malloc(sizeof(char) * MAX_HEADER_LENGTH);
@@ -118,7 +120,7 @@ int validateHeader(char* token, LinkedList* headerList)
             {
                 /* Insert into the last element of linked list */
                 insertLast(headerList, headerInfo);
-                success = 1;
+                success = TRUE;
             }
             else
             {
@@ -130,12 +132,10 @@ int validateHeader(char* token, LinkedList* headerList)
             printf("Invalid header item: %s\n",  token);
         }
     }
-
+    /* Failed so free header */
     if (!success)
     {
-        free(headerInfo->name);
-        free(headerInfo->type);
-        free(headerInfo);
+        freeHeader(headerInfo);
     }
 
     return success;
@@ -149,11 +149,11 @@ int validateHeader(char* token, LinkedList* headerList)
  */
 int validateType(char* type)
 {
-    int valid = 0;
+    int valid = FALSE;
 
     /* Only valid options are integer and string */
     if ((strcmp(type, "string") == 0) || (strcmp(type, "integer") == 0))
-        valid = 1;
+        valid = TRUE;
 
     return valid;
 }
@@ -164,9 +164,10 @@ int validateType(char* type)
  * EXPORT: int success
  * Validates the data line and adds it to out linked list
  */
+ /* TODO: Shorten this function and increase cohesion */
 int parseDataLine(char* line, LinkedList* outerDataList, LinkedList* headerList)
 {
-    int success = 1;
+    int success = TRUE;
 
     LinkedList* dataList = createLinkedList();
 
@@ -174,14 +175,13 @@ int parseDataLine(char* line, LinkedList* outerDataList, LinkedList* headerList)
     HeaderInfo* headerInfo;
 
     char* token = strtok(line, ",");
-    while (token != NULL && success == 1)
+    while (token != NULL && success == TRUE)
     {
         /* Ensure the node isn't null */
         if (currentHeader != NULL)
         {
             /* Get the current header type for validation */
             headerInfo = (HeaderInfo*) currentHeader->value;
-
 
             if (strcmp(headerInfo->type, "string") == 0)
             {
@@ -204,7 +204,7 @@ int parseDataLine(char* line, LinkedList* outerDataList, LinkedList* headerList)
             else
             {
                 printf("Cannot convert %s to %s", token, headerInfo->type);
-                success = 0;
+                success = FALSE;
             }
 
             /* Next token */
@@ -214,11 +214,9 @@ int parseDataLine(char* line, LinkedList* outerDataList, LinkedList* headerList)
         {
             /* More data than headers? */
             printf("Invalid CSV file format");
-            success = 0;
+            success = FALSE;
         }
-
         currentHeader = currentHeader->next;
-
     }
 
     free(line);
@@ -244,14 +242,14 @@ int parseDataLine(char* line, LinkedList* outerDataList, LinkedList* headerList)
  */
 int validateIntData(char* token, LinkedList* dataList)
 {
-    int success = 0;
+    int success = FALSE;
     int* intValue;
 
     intValue = (int*) malloc(sizeof(int));
     if (sscanf(token, "%d", intValue) == 1)
     {
         insertLast(dataList, intValue);
-        success = 1;
+        success = TRUE;
     }
     else
     {

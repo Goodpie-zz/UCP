@@ -2,6 +2,8 @@
 #include <stdio.h>
 #include <string.h>
 
+#include "boolean.h"
+
 #define LINE_LENGTH 4096
 
 /**
@@ -12,7 +14,7 @@
  */
 int openFile(FILE** file, char* filename, char* mode)
 {
-    int success = 1;
+    int success = TRUE;
 
     *file = fopen(filename, mode);
 
@@ -20,7 +22,7 @@ int openFile(FILE** file, char* filename, char* mode)
     if (*file == NULL)
     {
         perror("Failed to open file");
-        success = 0;
+        success = FALSE;
     }
     else
     {
@@ -29,7 +31,7 @@ int openFile(FILE** file, char* filename, char* mode)
         {
             perror("Failed to read/write file");
             fclose(*file);
-            success = 0;
+            success = FALSE;
         }
     }
 
@@ -72,7 +74,7 @@ char* readLine(FILE* file, int* endOfFile)
     /* Check EOF */
     if (ch == EOF)
     {
-        *endOfFile = 1;
+        *endOfFile = TRUE;
     }
 
     /* Add string terminator */

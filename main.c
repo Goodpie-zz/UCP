@@ -14,6 +14,7 @@
 #include "csvparser.h"
 #include "filereader.h"
 #include "headerinfo.h"
+#include "boolean.h"
 
 /* Assuming file name can only have a max of 255 chars */
 #define MAX_FILENAME_SIZE 255
@@ -94,34 +95,34 @@ int main(int argc, char* argv[])
  */
 int validateArguments(int argc, char** argv, char* inFileName, char* outFileName)
 {
-    int validArgCount = 0, inFileFound = 0, outFileFound = 0;
+    int validArgCount = FALSE, inFileFound = FALSE, outFileFound = FALSE;
 
     /* First check if correct number of arguments */
     if (argc == 5)
     {
-        validArgCount = 1;
+        validArgCount = TRUE;
         /* Check for an input file */
         if (*argv[1] == 'i')
         {
             strcpy(inFileName, argv[2]);
-            inFileFound = 1;
+            inFileFound = TRUE;
         }
         else if (*argv[3] == 'i')
         {
             strcpy(inFileName, argv[4]);
-            inFileFound = 1;
+            inFileFound = TRUE;
         }
 
         /* Check for an output file */
         if (*argv[1] == 'o')
         {
             strcpy(outFileName, argv[2]);
-            outFileFound = 1;
+            outFileFound = TRUE;
         }
         else if (*argv[3] == 'o')
         {
             strcpy(outFileName, argv[4]);
-            outFileFound = 1;
+            outFileFound = TRUE;
         }
     }
 
@@ -139,7 +140,7 @@ int displayMenu(LinkedList* headerList)
     Node* currentNode;
     HeaderInfo* headerInfo;
     int i, c;
-    int choice = -1;
+    int choice = -1; /* Default choice is invalid */
 
     while ((choice <= 0) || (choice > headerList->size))
     {
