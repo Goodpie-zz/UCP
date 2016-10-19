@@ -4,8 +4,17 @@
 
 #include "csvparser.h"
 #include "filereader.h"
+#include "headerinfo.h"
 
 #define MAX_HEADER_LENGTH 4096
+
+static int parseHeaderLine(char*, LinkedList*);
+static int validateHeader(char*, LinkedList*);
+static int validateHeader(char*, LinkedList*);
+static int validateType(char*);
+static int parseDataLine(char*, LinkedList*, LinkedList*);
+static int validateIntData(char*, LinkedList*);
+static void validateStringData(char*, LinkedList*);
 
 /**
  * SUBMODULE: parseCSV
@@ -95,8 +104,8 @@ int validateHeader(char* token, LinkedList* headerList)
     int validType;
 
     headerInfo = (HeaderInfo*) malloc(sizeof(HeaderInfo));
-    headerInfo->name = malloc(sizeof(char) * MAX_HEADER_LENGTH);
-    headerInfo->type = malloc(sizeof(char) * MAX_HEADER_LENGTH);
+    headerInfo->name = (char*) malloc(sizeof(char) * MAX_HEADER_LENGTH);
+    headerInfo->type = (char*) malloc(sizeof(char) * MAX_HEADER_LENGTH);
 
     if (strlen(token) < (MAX_HEADER_LENGTH * 2))
     {
@@ -173,7 +182,7 @@ int parseDataLine(char* line, LinkedList* outerDataList, LinkedList* headerList)
             /* Get the current header type for validation */
             headerInfo = (HeaderInfo*) currentHeader->value;
 
-            
+
             if (strcmp(headerInfo->type, "string") == 0)
             {
                 /* String is already valid, just copy string */
@@ -272,62 +281,11 @@ void validateStringData(char* token, LinkedList* dataList)
     insertLast(dataList, strValue);
 }
 
-/**
- * SUBMODULE: freeHeaderLinkedList
- * IMPORT: LinkedList*
- * EXPORT: None
- * Handles specific case of freeing header list containing HeaderInfo struct
- */
-void freeHeaderLinkedList(LinkedList* linkedList)
-{
-    HeaderInfo* value;
-    Node *node, *nextNode;
-    node = linkedList->head;
-
-    if (linkedListIsEmpty(linkedList))
-    {
-        freeLinkedList(linkedList);
-    }
-    else
-    {
-        /* Traverse list until last value (where next is NULL) */
-        while (node != NULL)
-        {
-            /* Temporarily assign next node */
-            nextNode = node->next;
-
-            /* Cast value to HeaderInfo and free struct */
-            value = (HeaderInfo*) node->value;
-            freeHeader(value);
-            free(node);
-
-            node = nextNode;
-        }
-
-        /* Free LinkedList */
-        free(linkedList);
-    }
-
-}
-
-/**
- * SUBMODULE: freeHeader
- * IMPORT: HeaderInfo* EXPORT: None
- * Handles freeing a HeaderInfo struct pointer
- */
-void freeHeader(HeaderInfo* header)
-{
-    free(header->name);
-    free(header->type);
-    free(header);
-}
-
-
 void freeOuterLinkedList(LinkedList* linkedList)
 {
     Node *outerNode, *outerNextNode;
     LinkedList* innerList;
-    
+
     if (linkedListIsEmpty(linkedList))
     {
         freeLinkedList(linkedList);

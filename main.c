@@ -13,11 +13,14 @@
 #include "main.h"
 #include "csvparser.h"
 #include "filereader.h"
+#include "headerinfo.h"
 
 /* Assuming file name can only have a max of 255 chars */
 #define MAX_FILENAME_SIZE 255
 
-void displayOuterList(LinkedList*, LinkedList*);
+static void displayOuterList(LinkedList*, LinkedList*);
+static int validateArguments(int, char**, char*, char*);
+static void usage(char*);
 
 /**
  * SUBMODULE: main
@@ -88,8 +91,7 @@ int main(int argc, char* argv[])
  * Checks whether the arguments provided by the user are valid and also
  *      determines the correct file names
  */
-int validateArguments(int argc, char** argv, char* inFileName,
-    char* outFileName)
+int validateArguments(int argc, char** argv, char* inFileName, char* outFileName)
 {
     int validArgCount = 0, inFileFound = 0, outFileFound = 0;
 
@@ -137,9 +139,9 @@ int displayMenu(LinkedList* headerList)
     HeaderInfo* headerInfo;
     int i, c;
     int choice = -1;
-    
+
     while ((choice <= 0) || (choice > headerList->size))
-    {   
+    {
         i = 1;
         /* display nice interface to user */
         printf("\nWhat would you like to sort the data by: \n");
@@ -178,8 +180,6 @@ int displayMenu(LinkedList* headerList)
     return choice - 1;
 
 }
-
-
 
 /**
  * SUBMODULE: usage

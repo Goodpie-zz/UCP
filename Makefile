@@ -2,8 +2,8 @@ CC = gcc
 CFLAGS = -Wall -ansi -pedantic -g
 EXEC = main
 TEST_EXEC = test_main
-OBJ = main.o linkedlist.o csvparser.o filereader.o
-TEST_OBJ = testcases.o linkedlist.o csvparser.o filereader.o
+OBJ = main.o linkedlist.o csvparser.o filereader.o headerinfo.o
+TEST_OBJ = testcases.o linkedlist.o csvparser.o filereader.o headerinfo.o
 
 all: $(EXEC) $(TEST_EXEC)
 
@@ -13,10 +13,10 @@ $(EXEC):$(OBJ)
 $(TEST_EXEC):$(TEST_OBJ)
 	$(CC) $(CFLAGS) $(TEST_OBJ) -o $(TEST_EXEC)
 
-main.o: main.c main.h linkedlist.h csvparser.h filereader.h
+main.o: main.c main.h linkedlist.h csvparser.h filereader.h headerinfo.h
 	$(CC) $(CFLAGS) -c main.c
 
-testcases.o: testcases.c testcases.h linkedlist.h csvparser.h filereader.h
+testcases.o: testcases.c testcases.h linkedlist.h csvparser.h filereader.h headerinfo.h
 	$(CC) $(CFLAGS) -c testcases.c
 
 linkedlist.o: linkedlist.c linkedlist.c
@@ -25,8 +25,11 @@ linkedlist.o: linkedlist.c linkedlist.c
 filereader.o: filereader.c filereader.h
 	$(CC) $(CFLAGS) -c filereader.c
 
-csvparser.o: csvparser.c csvparser.h filereader.h
+csvparser.o: csvparser.c csvparser.h filereader.h headerinfo.h
 	$(CC) $(CFLAGS) -c csvparser.c
+
+headerinfo.o: headerinfo.c headerinfo.h linkedlist.h
+	$(CC) $(CFLAGS) -c headerinfo.c
 
 clean:
 	rm -f $(OBJ) $(TEST_OBJ)
