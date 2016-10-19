@@ -21,6 +21,7 @@
 static void displayOuterList(LinkedList*, LinkedList*);
 static int validateArguments(int, char**, char*, char*);
 static void usage(char*);
+static int displayMenu(LinkedList*);
 
 /**
  * SUBMODULE: main
