@@ -15,14 +15,18 @@
 #include "filereader.h"
 #include "headerinfo.h"
 #include "boolean.h"
+#include "insertionsort.h"
 
 /* Assuming file name can only have a max of 255 chars */
 #define MAX_FILENAME_SIZE 255
 
 static void displayOuterList(LinkedList*, LinkedList*);
+static int openIOFiles(FILE**, FILE**, char*, char*);
 static int validateArguments(int, char**, char*, char*);
 static void usage(char*);
 static int displayMenu(LinkedList*);
+static int displayOrderMenu();
+static int getMenuInput(int max);
 
 /**
  * SUBMODULE: main
@@ -30,28 +34,31 @@ static int displayMenu(LinkedList*);
  * EXPORT: int
  * Controls the main flow of the program
  */
+ /* TODO: shorten this function */
 int main(int argc, char* argv[])
 {
-    FILE *inFile, *outFile;
-    int validInFile, validOutFile;
-    int sortOption;
+    FILE *inFile = NULL, *outFile = NULL;
+    int validFiles;
+    int sortOption, sortOrder;
     char inFileName[MAX_FILENAME_SIZE], outFileName[MAX_FILENAME_SIZE];
+    Node* sortNode;
+    HeaderInfo* sortHeader;
 
     LinkedList* dataList = NULL;
     LinkedList* headerList = NULL;
 
     if (validateArguments(argc, argv, inFileName, outFileName))
     {
-        /* Arguments validates */
-        /* Check IO files for errors */
-        validInFile = openFile(&inFile, inFileName, "r");
-        validOutFile = openFile(&outFile, outFileName, "w");
-
-        if (validInFile && validOutFile)
+        validFiles = openIOFiles(&inFile, &outFile, inFileName, outFileName);
+        if (validFiles)
         {
             if (parseCSV(inFile, &dataList, &headerList))
             {
                 sortOption = displayMenu(headerList);
+                sortOrder = displayOrderMenu();
+                sortNode = findIndex(headerList, sortOption);
+                sortHeader = (HeaderInfo*) sortNode->value;
+                sortBy(sortOption, sortHeader, dataList, sortOrder);
                 displayOuterList(headerList, dataList);
                 freeOuterLinkedList(dataList);
                 freeHeaderLinkedList(headerList);
@@ -60,21 +67,9 @@ int main(int argc, char* argv[])
             {
                 printf("Exiting: invalid CSV file\n");
             }
-
+;
             fclose(inFile);
             fclose(outFile);
-        }
-        else
-        {
-            /* fileinvalid so close based on which one failed */
-            if (!validInFile)
-            {
-                fclose(outFile);
-            }
-            else if (!validOutFile)
-            {
-                fclose(inFile);
-            }
         }
     }
     else
@@ -84,6 +79,28 @@ int main(int argc, char* argv[])
     }
 
     return 0;
+}
+
+int openIOFiles(FILE** inFile, FILE** outFile, char* inFileName, char* outFileName)
+{
+    /* Flags for invalid files */
+    int validInFile, validOutFile;
+
+    /* Check IO files for errors */
+    validInFile = openFile(inFile, inFileName, "r");
+    validOutFile = openFile(outFile, outFileName, "w");
+
+    /* on file invalid so close based on which one failed */
+    if (!validInFile)
+    {
+        fclose(*outFile);
+    }
+    else if (!validOutFile)
+    {
+        fclose(*inFile);
+    }
+
+    return validInFile && validOutFile;
 }
 
 /**
@@ -139,13 +156,14 @@ int displayMenu(LinkedList* headerList)
 {
     Node* currentNode;
     HeaderInfo* headerInfo;
-    int i, c;
+    int i;
     int choice = -1; /* Default choice is invalid */
 
     while ((choice <= 0) || (choice > headerList->size))
     {
         i = 1;
         /* display nice interface to user */
+        printf("\n________________________________________ \n");
         printf("\nWhat would you like to sort the data by: \n");
         printf("________________________________________ \n\n");
 
@@ -159,28 +177,53 @@ int displayMenu(LinkedList* headerList)
             currentNode = currentNode->next;
         }
 
-        /* Check valid input */
-        printf("\nEnter an option between 1-%d: \n", i-1);
-        if (scanf("%d", &choice) == 1)
-        {
-            if ((choice <= 0) || (choice > headerList->size))
-            {
-                printf("\nInvalid choice: %d\n", choice);
-            }
-        }
-        else
-        {
-            printf("\nInvalid choice. Please enter an integer\n");
-            choice = -1;
-
-            /* Clear buffer due to incorrect input */
-            while ((c = getchar() != '\n') && (c != EOF));
-        }
+        choice = getMenuInput(i);
     }
 
     /* Return actual index */
     return choice - 1;
+}
 
+int displayOrderMenu()
+{
+    int choice = -1;
+    while ((choice < 1) || (choice > 2))
+    {
+        printf("\n__________________________________________ \n");
+        printf("\nWhat order would you like to sort the data: \n");
+        printf("__________________________________________ \n\n");
+        printf("1) Ascending\n");
+        printf("2) Ascending\n");
+        choice = getMenuInput(2);
+    }
+
+    return choice - 1;
+}
+
+int getMenuInput(int max)
+{
+    int choice = -1;
+    char c;
+
+    /* Check valid input */
+    printf("\nEnter an option between 1-%d: ", max-1);
+    if (scanf("%d", &choice) == 1)
+    {
+        if ((choice <= 0) || (choice >= max))
+        {
+            printf("Invalid choice: %d\n", choice);
+        }
+    }
+    else
+    {
+        printf("Invalid choice. Please enter an integer\n");
+        choice = -1;
+
+        /* Clear buffer due to incorrect input */
+        while ((c = getchar() != '\n') && (c != EOF));
+    }
+
+    return choice;
 }
 
 /**
@@ -195,6 +238,7 @@ void usage(char* error)
     printf("%s\nCorrect Usage: ./main i <infile> o <outfile>", error);
 }
 
+/* TODO: Shorten this function and add comments */
 void displayOuterList(LinkedList* headerList, LinkedList* outerList)
 {
     Node* headerCurrentNode;
