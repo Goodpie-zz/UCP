@@ -9,6 +9,8 @@
 static void sortByString(int, LinkedList*, int);
 static void sortByInteger(int, LinkedList*, int);
 static void swapNodes(Node*, Node*);
+static LinkedList* getLinkedList(Node*);
+static int getIntValue(LinkedList*, int);
 
 void sortBy(int headerIndex, HeaderInfo* header, LinkedList* dataList, int order)
 {
@@ -28,93 +30,83 @@ void sortByString(int headerIndex, LinkedList* dataList, int order)
     /* TODO: Implement method */
 }
 
+/* TODO: Handle null value comparison */
 void sortByInteger(int headerIndex, LinkedList* dataList, int order)
 {
     int currentIndex = 0;
-    int correctPosition;
-    Node *currentListNode, *previousListNode;
+    int posFound;
     LinkedList *currentList, *previousList;
     Node *currentNode, *previousNode;
-    int *currentValue, *previousValue;
+    int currentValue, previousValue;
 
-    printf("Order Value: %d\n", order);
-
-    currentListNode = dataList->head;
-    while (currentListNode != NULL)
+    currentNode = dataList->head;
+    while (currentNode != NULL)
     {
-        previousListNode = currentListNode->prev;
-        correctPosition = FALSE;
-        while ((previousListNode != NULL) && (correctPosition == FALSE))
+        previousNode = currentNode->prev;
+        posFound = FALSE;
+        while ((previousNode != NULL) && (posFound == FALSE))
         {
-            currentList = (LinkedList*) currentListNode->value;
-            previousList = (LinkedList*) previousListNode->value;
+            currentList = getLinkedList(currentNode);
+            previousList = getLinkedList(previousNode);
 
-            currentNode = findIndex(currentList, headerIndex);
-            previousNode = findIndex(previousList, headerIndex);
-
-            currentValue = (int*) currentNode->value;
-            previousValue = (int*) previousNode->value;
-
-            printf("Comparing %d with %d\n", *currentValue, *previousValue);
+            currentValue = getIntValue(currentList, headerIndex);
+            previousValue = getIntValue(previousList, headerIndex);
 
             if (order == ASCENDING)
             {
-                if (*currentValue < *previousValue)
+                if (currentValue < previousValue)
                 {
-                    printf("%d is less than %d\n", *currentValue, *previousValue);
-                    swapNodes(currentListNode, previousListNode);
+                    swapNodes(currentNode, previousNode);
                 }
                 else
                 {
-                    printf("%d not less than %d\n", *currentValue, *previousValue);
-                    correctPosition = TRUE;
+                    posFound = TRUE;
                 }
             }
             else if (order == DESCENDING)
             {
-                if (*currentValue > *previousValue)
+                if (currentValue > previousValue)
                 {
-                    printf("%d is more than %d\n", *currentValue, *previousValue);
-                    swapNodes(currentListNode, previousListNode);
+                    swapNodes(currentNode, previousNode);
                 }
                 else
                 {
-                    printf("%d not more than %d\n", *currentValue, *previousValue);
-                    correctPosition = TRUE;
+                    posFound = TRUE;
                 }
             }
-
-            previousListNode = currentListNode->prev;
         }
 
         currentIndex += 1;
-        printf("Index: %d\n", currentIndex);
-        currentListNode = findIndex(dataList, currentIndex);
+        currentNode = findIndex(dataList, currentIndex);
     }
+}
+
+LinkedList* getLinkedList(Node* node)
+{
+    LinkedList* value = NULL;
+    if (node != NULL)
+    {
+        value = (LinkedList*) node->value;
+    }
+    return value;
+}
+
+int getIntValue(LinkedList* list, int index)
+{
+    int returnValue;
+    Node* node = findIndex(list, index);
+    if (node != NULL)
+    {
+        returnValue = *((int*) node->value);
+    }
+
+    return returnValue;
 }
 
 void swapNodes(Node* currentNode, Node* prevNode)
 {
-    Node *tmpNode1, *tmpNode2;
-
-    tmpNode1 = prevNode->prev;
-    tmpNode2 = currentNode->next;
-
-    currentNode->prev = tmpNode1;
-
-    if (tmpNode1 != NULL)
-    {
-        tmpNode1->next = currentNode;
-    }
-
-    prevNode->next = tmpNode2;
-
-    if (tmpNode2 != NULL)
-    {
-        tmpNode2->prev = prevNode;
-    }
-
-    prevNode->prev = currentNode;
-    currentNode->next = prevNode;
+    void* tmp = currentNode->value;
+    currentNode->value = prevNode->value;
+    prevNode->value = tmp;
 
 }

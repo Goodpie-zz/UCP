@@ -67,7 +67,7 @@ int main(int argc, char* argv[])
             {
                 printf("Exiting: invalid CSV file\n");
             }
-;
+
             fclose(inFile);
             fclose(outFile);
         }
@@ -193,7 +193,7 @@ int displayOrderMenu()
         printf("\nWhat order would you like to sort the data: \n");
         printf("__________________________________________ \n\n");
         printf("1) Ascending\n");
-        printf("2) Ascending\n");
+        printf("2) Descending\n");
         choice = getMenuInput(2);
     }
 

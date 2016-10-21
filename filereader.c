@@ -5,7 +5,6 @@
 #include "boolean.h"
 
 #define LINE_LENGTH 4096
-
 /**
  *  SUBMODULE:  openFile
  *  IMPORT:     FILE**, char*, char*
