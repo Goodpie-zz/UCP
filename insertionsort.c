@@ -6,79 +6,138 @@
 #include "insertionsort.h"
 #include "boolean.h"
 
-static void sortByString(int, LinkedList*, int);
-static void sortByInteger(int, LinkedList*, int);
-static void swapNodes(Node*, Node*);
+static int compareIntVal(Node*, Node*, int, int);
+static int compareCharVal(Node*, Node*, int, int);
+static char* getCharVal(LinkedList*, int);
+static int* getIntVal(LinkedList*, int);
 static LinkedList* getLinkedList(Node*);
-static int getIntValue(LinkedList*, int);
 
-void sortBy(int headerIndex, HeaderInfo* header, LinkedList* dataList, int order)
-{
-    printf("%s is type %s\n", header->name, header->type);
-    if (strcmp("string", header->type) == 0)
-    {
-        sortByString(headerIndex, dataList, order);
-    }
-    else
-    {
-        sortByInteger(headerIndex, dataList, order);
-    }
-}
 
-void sortByString(int headerIndex, LinkedList* dataList, int order)
+void sortList(int headerIndex, HeaderInfo* header, LinkedList* dataList, int order)
 {
-    /* TODO: Implement method */
-}
-
-/* TODO: Handle null value comparison */
-void sortByInteger(int headerIndex, LinkedList* dataList, int order)
-{
+    int posFound = FALSE;
     int currentIndex = 0;
-    int posFound;
-    LinkedList *currentList, *previousList;
-    Node *currentNode, *previousNode;
-    int currentValue, previousValue;
 
-    currentNode = dataList->head;
-    while (currentNode != NULL)
+    Node *curOuterNode, *prevOuterNode;
+
+    curOuterNode = dataList->head;
+
+    while (curOuterNode != NULL)
     {
-        previousNode = currentNode->prev;
+
         posFound = FALSE;
-        while ((previousNode != NULL) && (posFound == FALSE))
+        prevOuterNode = curOuterNode->prev;
+
+        while ((!posFound) && (prevOuterNode != NULL))
         {
-            currentList = getLinkedList(currentNode);
-            previousList = getLinkedList(previousNode);
-
-            currentValue = getIntValue(currentList, headerIndex);
-            previousValue = getIntValue(previousList, headerIndex);
-
-            if (order == ASCENDING)
+            if (strcmp(header->type, "string") == 0)
             {
-                if (currentValue < previousValue)
-                {
-                    swapNodes(currentNode, previousNode);
-                }
-                else
-                {
-                    posFound = TRUE;
-                }
+                posFound = compareCharVal(curOuterNode, prevOuterNode,
+                    headerIndex, order);
             }
-            else if (order == DESCENDING)
+            else if (strcmp(header->type, "integer") == 0)
             {
-                if (currentValue > previousValue)
-                {
-                    swapNodes(currentNode, previousNode);
-                }
-                else
-                {
-                    posFound = TRUE;
-                }
+                posFound = compareIntVal(curOuterNode, prevOuterNode,
+                    headerIndex, order);
+            }
+
+            if (!posFound)
+            {
+                swapNodes(curOuterNode, prevOuterNode);
             }
         }
 
         currentIndex += 1;
-        currentNode = findIndex(dataList, currentIndex);
+        curOuterNode = findIndex(dataList, currentIndex);
     }
+}
+
+int compareIntVal(Node* curOuterNode, Node* prevOuterNode, int index, int order)
+{
+    LinkedList *curList, *prevList;
+    int *curVal, *prevVal;
+    int posFound = TRUE;
+
+    curList = getLinkedList(curOuterNode);
+    prevList = getLinkedList(prevOuterNode);
+
+    curVal = getIntVal(curList, index);
+    prevVal = getIntVal(prevList, index);
+
+    if (order == ASCENDING)
+    {
+        if ((curVal == NULL) || (prevVal == NULL))
+        {
+            if ((curVal == NULL) && (prevVal != NULL))
+            {
+                posFound = FALSE;
+            }
+        }
+        else if (*curVal < *prevVal)
+        {
+            posFound = FALSE;
+        }
+    }
+    else if (order == DESCENDING)
+    {
+        if ((curVal == NULL) || (prevVal == NULL))
+        {
+            if ((curVal != NULL) && (prevVal == NULL))
+            {
+                posFound = FALSE;
+            }
+        }
+        else if (*curVal > *prevVal)
+        {
+            posFound = FALSE;
+        }
+    }
+
+    return posFound;
+}
+
+int compareCharVal(Node* curOuterNode, Node* prevOuterNode, int index, int order)
+{
+    LinkedList *curList, *prevList;
+    char *curVal, *prevVal;
+    int posFound = TRUE;
+
+    curList = getLinkedList(curOuterNode);
+    prevList = getLinkedList(prevOuterNode);
+
+    curVal = getCharVal(curList, index);
+    prevVal = getCharVal(prevList, index);
+
+    if (order == ASCENDING)
+    {
+        if ((curVal == NULL) || (prevVal == NULL))
+        {
+            if ((curVal == NULL) && (prevVal != NULL))
+            {
+                posFound = FALSE;
+            }
+        }
+        else if (curVal < prevVal)
+        {
+            posFound = FALSE;
+        }
+    }
+    else if (order == DESCENDING)
+    {
+        if ((curVal == NULL) || (prevVal == NULL))
+        {
+            if ((curVal != NULL) && (prevVal == NULL))
+            {
+                posFound = FALSE;
+            }
+        }
+        else if (curVal > prevVal)
+        {
+            posFound = FALSE;
+        }
+    }
+
+    return posFound;
 }
 
 LinkedList* getLinkedList(Node* node)
@@ -91,22 +150,26 @@ LinkedList* getLinkedList(Node* node)
     return value;
 }
 
-int getIntValue(LinkedList* list, int index)
+int* getIntVal(LinkedList* list, int index)
 {
-    int returnValue;
+    int* value = NULL;
     Node* node = findIndex(list, index);
     if (node != NULL)
     {
-        returnValue = *((int*) node->value);
+        value = (int*) node->value;
     }
 
-    return returnValue;
+    return value;
 }
 
-void swapNodes(Node* currentNode, Node* prevNode)
+char* getCharVal(LinkedList* list, int index)
 {
-    void* tmp = currentNode->value;
-    currentNode->value = prevNode->value;
-    prevNode->value = tmp;
+    char* value = NULL;
+    Node* node = findIndex(list, index);
+    if (node != NULL)
+    {
+        value = (char*) node->value;
+    }
 
+    return value;
 }

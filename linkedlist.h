@@ -58,6 +58,9 @@ Node* removeLast(LinkedList*);
  */
 Node* findIndex(LinkedList*, int);
 
+/* TODO: Add comments */
+void swapNodes(Node*, Node*);
+
 /**
  * SUBMODULE: linkedListIsEmpty
  * IMPORT: linkedList
@@ -73,5 +76,3 @@ int linkedListIsEmpty(LinkedList*);
  * Frees all elements within the linkedList
  */
 void freeLinkedList(LinkedList*);
-
-

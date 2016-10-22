@@ -6,4 +6,4 @@
 #define ASCENDING 0
 #define DESCENDING 1
 
-void sortBy(int, HeaderInfo*, LinkedList*, int);
+void sortList(int, HeaderInfo*, LinkedList*, int);

@@ -58,7 +58,7 @@ int main(int argc, char* argv[])
                 sortOrder = displayOrderMenu();
                 sortNode = findIndex(headerList, sortOption);
                 sortHeader = (HeaderInfo*) sortNode->value;
-                sortBy(sortOption, sortHeader, dataList, sortOrder);
+                sortList(sortOption, sortHeader, dataList, sortOrder);
                 displayOuterList(headerList, dataList);
                 freeOuterLinkedList(dataList);
                 freeHeaderLinkedList(headerList);

@@ -1,4 +1,7 @@
 test (integer), test2 (string), test3 (string)
-5, asdsd, adsdsa
-2, asddsa, asddsa
- , asddsa, asddsa
+1, a, f
+2, b, e
+3, c, d
+4, d, c
+5, e, b
+6, f, a

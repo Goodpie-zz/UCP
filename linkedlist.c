@@ -179,6 +179,14 @@ int linkedListIsEmpty(LinkedList* linkedList)
     return linkedList->size == 0;
 }
 
+void swapNodes(Node* node1, Node* node2)
+{
+    void* tmp = node1->value;
+    node1->value = node2->value;
+    node2->value = tmp;
+}
+
+
 /**
  * SUBMODULE: freeLinkedList
  * IMPORT: LinkedList* linkedList
