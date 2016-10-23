@@ -177,7 +177,7 @@ int displayMenu(LinkedList* headerList)
             currentNode = currentNode->next;
         }
 
-        choice = getMenuInput(i);
+        choice = getMenuInput(i - 1);
     }
 
     /* Return actual index */
@@ -206,10 +206,10 @@ int getMenuInput(int max)
     char c;
 
     /* Check valid input */
-    printf("\nEnter an option between 1-%d: ", max-1);
+    printf("\nEnter an option between 1-%d: ", max);
     if (scanf("%d", &choice) == 1)
     {
-        if ((choice <= 0) || (choice >= max))
+        if ((choice <= 0) || (choice > max))
         {
             printf("Invalid choice: %d\n", choice);
         }

@@ -59,7 +59,7 @@ Node* removeLast(LinkedList*);
 Node* findIndex(LinkedList*, int);
 
 /* TODO: Add comments */
-void swapNodes(Node*, Node*);
+void swapNodes(Node**, Node**);
 
 /**
  * SUBMODULE: linkedListIsEmpty

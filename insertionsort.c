@@ -17,19 +17,20 @@ void sortList(int headerIndex, HeaderInfo* header, LinkedList* dataList, int ord
 {
     int posFound = FALSE;
     int currentIndex = 0;
+    int i;
 
     Node *curOuterNode, *prevOuterNode;
 
-    curOuterNode = dataList->head;
-
-    while (curOuterNode != NULL)
+    for (currentIndex = 0; currentIndex < dataList->size; currentIndex ++)
     {
-
+        printf("currentIndex = %d\n", currentIndex);
+        curOuterNode = findIndex(dataList, currentIndex);
         posFound = FALSE;
-        prevOuterNode = curOuterNode->prev;
-
-        while ((!posFound) && (prevOuterNode != NULL))
+        i = currentIndex - 1;
+        while ((i >= 0) && (posFound != TRUE))
         {
+            printf("i = %d\n", i);
+            prevOuterNode = curOuterNode->prev;
             if (strcmp(header->type, "string") == 0)
             {
                 posFound = compareCharVal(curOuterNode, prevOuterNode,
@@ -39,16 +40,17 @@ void sortList(int headerIndex, HeaderInfo* header, LinkedList* dataList, int ord
             {
                 posFound = compareIntVal(curOuterNode, prevOuterNode,
                     headerIndex, order);
+
             }
 
             if (!posFound)
             {
-                swapNodes(curOuterNode, prevOuterNode);
+                swapNodes(&curOuterNode, &prevOuterNode);
             }
+
+            i--;
         }
 
-        currentIndex += 1;
-        curOuterNode = findIndex(dataList, currentIndex);
     }
 }
 
@@ -68,13 +70,15 @@ int compareIntVal(Node* curOuterNode, Node* prevOuterNode, int index, int order)
     {
         if ((curVal == NULL) || (prevVal == NULL))
         {
-            if ((curVal == NULL) && (prevVal != NULL))
+            if (prevVal != NULL)
             {
+                printf("cur val is NULL\n");
                 posFound = FALSE;
             }
         }
         else if (*curVal < *prevVal)
         {
+            printf("%d was less than %d\n", *curVal, *prevVal);
             posFound = FALSE;
         }
     }
@@ -82,14 +86,21 @@ int compareIntVal(Node* curOuterNode, Node* prevOuterNode, int index, int order)
     {
         if ((curVal == NULL) || (prevVal == NULL))
         {
-            if ((curVal != NULL) && (prevVal == NULL))
+            printf("Value is null\n");
+            if (curVal != NULL)
             {
                 posFound = FALSE;
+                printf("Prev val is NULL\n");
             }
         }
         else if (*curVal > *prevVal)
         {
+            printf("%d was greater than %d\n", *curVal, *prevVal);
             posFound = FALSE;
+        }
+        else
+        {
+            printf("%d was not greater than %d\n", *curVal, *prevVal);
         }
     }
 
