@@ -7,6 +7,7 @@
 #include "boolean.h"
 
 static int sortByInt(int*, int*, int);
+int sortByString(char*, char*, int);
 
 void sortList(LinkedList* dataList, HeaderInfo* header, int order)
 {
@@ -34,10 +35,13 @@ void sortList(LinkedList* dataList, HeaderInfo* header, int order)
                 printf("\nComparing at i = %d, j = %d\n", j, j - 1);
                 posFound = sortByInt((int*) curValue, (int*) prevValue, order);
             }
+            else
+            {
+                posFound = sortByString((char*) curValue, (char*) prevValue, order);
+            }
 
             if (!posFound)
             {
-                printf("Swapping\n");
                 swapNodesByIndex(dataList, j, j - 1);
             }
 
@@ -52,19 +56,62 @@ int sortByInt(int* current, int* prev, int order)
     int posFound = TRUE;
     if (order == ASCENDING)
     {
-
+        if (current == NULL)
+        {
+            posFound = FALSE;
+        }
+        else if (prev != NULL)
+        {
+            if (*current < *prev)
+            {
+                posFound = FALSE;
+            }
+        }
     }
     else
     {
         if (prev == NULL)
         {
-            printf("prev = NULL\n");
             posFound = FALSE;
         }
         else if (current != NULL)
         {
-            printf("Comparing %d with %d\n", *current, *prev);
             if (*current > *prev)
+            {
+                posFound = FALSE;
+            }
+        }
+    }
+
+    return posFound;
+}
+
+int sortByString(char* current, char* prev, int order)
+{
+    int posFound = TRUE;
+    if (order == ASCENDING)
+    {
+        if (current == NULL)
+        {
+            posFound = FALSE;
+        }
+        else if (prev != NULL)
+        {
+            if (strcmp(current, prev) < 0)
+            {
+                posFound = FALSE;
+            }
+        }
+    }
+    else
+    {
+        if (prev == NULL)
+        {
+            posFound = FALSE;
+        }
+        else if (current != NULL)
+        {
+            if (strcmp(current, prev) > 0)
             {
                 posFound = FALSE;
             }
