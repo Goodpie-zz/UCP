@@ -56,10 +56,13 @@ Node* removeLast(LinkedList*);
  * EXPORT: node
  * Gets Node at index from linkedList
  */
-Node* findIndex(LinkedList*, int);
+ /* TODO: rebrand */
+void* findIndex(LinkedList*, int);
 
 /* TODO: Add comments */
-void swapNodes(Node**, Node**);
+void swapNodes(Node*, Node*);
+
+void swapNodesByIndex(LinkedList*, int, int);
 
 /**
  * SUBMODULE: linkedListIsEmpty

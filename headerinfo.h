@@ -5,8 +5,9 @@
 
 typedef struct
 {
-    char* type;
     char* name;
+    char* type;
+    int index;
 } HeaderInfo;
 
 void freeHeaderLinkedList(LinkedList*);

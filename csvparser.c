@@ -10,8 +10,7 @@
 #define MAX_HEADER_LENGTH 4096
 
 static int parseHeaderLine(char*, LinkedList*);
-static int validateHeader(char*, LinkedList*);
-static int validateHeader(char*, LinkedList*);
+static int validateHeader(char*, LinkedList*, int);
 static int validateType(char*);
 static int parseDataLine(char*, LinkedList*, LinkedList*);
 static int validateIntData(char*, LinkedList*);
@@ -73,13 +72,15 @@ int parseCSV(FILE* inFile, LinkedList** outerDataList, LinkedList** headerList)
 int parseHeaderLine(char* line, LinkedList* headerList)
 {
     int success = TRUE;
+    int index = 0;
 
     /* Tokenize line and validate each token */
     char* token = strtok(line, ",");
     while ((token != NULL) && (success == TRUE))
     {
         /* Validate and add to linked list */
-        success = validateHeader(token, headerList);
+        success = validateHeader(token, headerList, index);
+        index += 1;
 
         /* Next token */
         token = strtok(NULL, ",");
@@ -97,17 +98,20 @@ int parseHeaderLine(char* line, LinkedList* headerList)
  * EXPORT: int success
  * Ensures the header is valid and adds it to linked list if true
  */
-int validateHeader(char* token, LinkedList* headerList)
+int validateHeader(char* token, LinkedList* headerList, int index)
 {
     HeaderInfo* headerInfo;
 
     int success = FALSE;
     int validType = TRUE;
 
+    printf("Inside header: Index = %d\n", index);
+
     /* Allocate memory for headerInfo */
     headerInfo = (HeaderInfo*) malloc(sizeof(HeaderInfo));
     headerInfo->name = (char*) malloc(sizeof(char) * MAX_HEADER_LENGTH);
     headerInfo->type = (char*) malloc(sizeof(char) * MAX_HEADER_LENGTH);
+    headerInfo->index = index;
 
     if (strlen(token) < (MAX_HEADER_LENGTH * 2))
     {

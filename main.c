@@ -41,7 +41,6 @@ int main(int argc, char* argv[])
     int validFiles;
     int sortOption, sortOrder;
     char inFileName[MAX_FILENAME_SIZE], outFileName[MAX_FILENAME_SIZE];
-    Node* sortNode;
     HeaderInfo* sortHeader;
 
     LinkedList* dataList = NULL;
@@ -56,9 +55,8 @@ int main(int argc, char* argv[])
             {
                 sortOption = displayMenu(headerList);
                 sortOrder = displayOrderMenu();
-                sortNode = findIndex(headerList, sortOption);
-                sortHeader = (HeaderInfo*) sortNode->value;
-                sortList(sortOption, sortHeader, dataList, sortOrder);
+                sortHeader = (HeaderInfo*) findIndex(headerList, sortOption);
+                sortList(dataList, sortHeader, sortOrder);
                 displayOuterList(headerList, dataList);
                 freeOuterLinkedList(dataList);
                 freeHeaderLinkedList(headerList);
@@ -177,7 +175,7 @@ int displayMenu(LinkedList* headerList)
             currentNode = currentNode->next;
         }
 
-        choice = getMenuInput(i - 1);
+        choice = getMenuInput(i);
     }
 
     /* Return actual index */
@@ -255,9 +253,6 @@ void displayOuterList(LinkedList* headerList, LinkedList* outerList)
         innerList = (LinkedList*) outerCurrentNode->value;
         innerCurrentNode = innerList->head;
         headerCurrentNode = headerList->head;
-
-        printf("\n");
-
         while (innerCurrentNode != NULL)
         {
             headerInfo = (HeaderInfo*) headerCurrentNode->value;

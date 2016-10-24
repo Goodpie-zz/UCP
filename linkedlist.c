@@ -147,7 +147,7 @@ Node* removeLast(LinkedList* linkedList)
  * EXPORT: node
  * Gets Node at index from linkedList
  */
-Node* findIndex(LinkedList* linkedList, int index)
+void* findIndex(LinkedList* linkedList, int index)
 {
     Node* node = NULL;
     int count;
@@ -164,7 +164,36 @@ Node* findIndex(LinkedList* linkedList, int index)
         }
     }
 
-    return node;
+    return node->value;
+}
+
+void swapNodesByIndex(LinkedList* linkedList, int i1, int i2)
+{
+    Node *node1, *node2;
+    int count = 0;
+
+    if ((i1 < linkedList->size) && (i1 >= 0))
+    {
+        node1 = linkedList->head;
+        while (count < i1)
+        {
+            node1 = node1->next;
+            count ++;
+        }
+    }
+
+    count = 0;
+    if ((i2 < linkedList->size) && (i2 >= 0))
+    {
+        node2 = linkedList->head;
+        while (count < i2)
+        {
+            node2 = node2->next;
+            count ++;
+        }
+    }
+
+    swapNodes(node1, node2);
 
 }
 
@@ -179,11 +208,11 @@ int linkedListIsEmpty(LinkedList* linkedList)
     return linkedList->size == 0;
 }
 
-void swapNodes(Node** node1, Node** node2)
+void swapNodes(Node* node1, Node* node2)
 {
-    void* tmp = (*node1)->value;
-    (*node1)->value = (*node2)->value;
-    (*node2)->value = tmp;
+    void* tmp = node1->value;
+    node1->value = node2->value;
+    node2->value = tmp;
 }
 
 
