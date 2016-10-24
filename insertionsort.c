@@ -32,7 +32,6 @@ void sortList(LinkedList* dataList, HeaderInfo* header, int order)
 
             if (strcmp(header->type, "integer") == 0)
             {
-                printf("\nComparing at i = %d, j = %d\n", j, j - 1);
                 posFound = sortByInt((int*) curValue, (int*) prevValue, order);
             }
             else

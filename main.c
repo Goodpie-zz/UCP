@@ -21,6 +21,7 @@
 #define MAX_FILENAME_SIZE 255
 
 static void displayOuterList(LinkedList*, LinkedList*);
+void writeListToFile(LinkedList*, LinkedList*, FILE*);
 static int openIOFiles(FILE**, FILE**, char*, char*);
 static int validateArguments(int, char**, char*, char*);
 static void usage(char*);
@@ -57,7 +58,7 @@ int main(int argc, char* argv[])
                 sortOrder = displayOrderMenu();
                 sortHeader = (HeaderInfo*) findIndex(headerList, sortOption);
                 sortList(dataList, sortHeader, sortOrder);
-                displayOuterList(headerList, dataList);
+                writeListToFile(headerList, dataList, outFile);
                 freeOuterLinkedList(dataList);
                 freeHeaderLinkedList(headerList);
             }
@@ -278,5 +279,67 @@ void displayOuterList(LinkedList* headerList, LinkedList* outerList)
         printf("\n");
 
         outerCurrentNode = outerCurrentNode->next;
+    }
+}
+
+void writeListToFile(LinkedList* headerList, LinkedList* dataList, FILE* file)
+{
+    Node* headerNode;
+    HeaderInfo* header;
+
+    Node *dataNode, *innerDataNode;
+    LinkedList *innerList;
+    void *value;
+
+    /* First loop through the header to create header line */
+    headerNode = headerList->head;
+    while (headerNode != NULL)
+    {
+        header = (HeaderInfo*) headerNode->value;
+        fprintf(file, "%s (%s)", header->name, header->type);
+        if (headerNode->next != NULL)
+        {
+            fprintf(file, "%s ", ",");
+        }
+        headerNode = headerNode->next;
+    }
+
+    fprintf(file, "\n");
+
+    dataNode = dataList->head;
+    while (dataNode != NULL)
+    {
+        headerNode = headerList->head;
+        innerList = (LinkedList*) dataNode->value;
+        innerDataNode = innerList->head;
+
+        while (innerDataNode != NULL)
+        {
+            header = (HeaderInfo*) headerNode->value;
+            if (strcmp(header->type, "string") == 0)
+            {
+                fprintf(file, "%s", (char*) innerDataNode->value);
+            }
+            else if (strcmp(header->type, "integer") == 0)
+            {
+                if (innerDataNode->value != NULL)
+                {
+                    fprintf(file, "%d", *(int*) innerDataNode->value);
+                }
+                else
+                {
+                    fprintf(file, " ");
+                }
+            }
+
+            if (innerDataNode->next != NULL)
+            {
+                fprintf(file, ",");
+            }
+            innerDataNode = innerDataNode->next;
+            headerNode = headerNode->next;
+        }
+
+        dataNode = dataNode->next;
     }
 }
