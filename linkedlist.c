@@ -180,8 +180,8 @@ void* findIndex(LinkedList* linkedList, int index)
 
 /*
  * SUBMODULE: swapNodesByIndex
- * IMPORT: linkedList
- * EXPORT: linkedList, i1, i2
+ * IMPORT: linkedList, i1, i2
+ * EXPORT: None
  * Swaps two nodes at i1 and i2
  */
 void swapNodesByIndex(LinkedList* linkedList, int i1, int id2)
