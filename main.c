@@ -10,7 +10,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "main.h"
 #include "csvparser.h"
 #include "filereader.h"
 #include "headerinfo.h"
@@ -20,7 +19,6 @@
 /* Assuming file name can only have a max of 255 chars */
 #define MAX_FILENAME_SIZE 255
 
-static void displayOuterList(LinkedList*, LinkedList*);
 void writeListToFile(LinkedList*, LinkedList*, FILE*);
 static int openIOFiles(FILE**, FILE**, char*, char*);
 static int validateArguments(int, char**, char*, char*);
@@ -237,51 +235,6 @@ void usage(char* error)
     printf("%s\nCorrect Usage: ./main i <infile> o <outfile>", error);
 }
 
-/* TODO: Shorten this function and add comments */
-void displayOuterList(LinkedList* headerList, LinkedList* outerList)
-{
-    Node* headerCurrentNode;
-    Node* outerCurrentNode;
-
-    LinkedList* innerList;
-    Node* innerCurrentNode;
-    HeaderInfo* headerInfo;
-
-    outerCurrentNode = outerList->head;
-
-    while (outerCurrentNode != NULL)
-    {
-        innerList = (LinkedList*) outerCurrentNode->value;
-        innerCurrentNode = innerList->head;
-        headerCurrentNode = headerList->head;
-        while (innerCurrentNode != NULL)
-        {
-            headerInfo = (HeaderInfo*) headerCurrentNode->value;
-            if (strcmp(headerInfo->type, "string") == 0)
-            {
-                printf("%s", (char*) innerCurrentNode->value);
-            }
-            else if (strcmp(headerInfo->type, "integer") == 0)
-            {
-                if (innerCurrentNode->value != NULL)
-                {
-                    printf("%d,", *(int*) innerCurrentNode->value);
-                }
-                else
-                {
-                    printf(" ,");
-                }
-            }
-            innerCurrentNode = innerCurrentNode->next;
-            headerCurrentNode = headerCurrentNode->next;
-        }
-
-        printf("\n");
-
-        outerCurrentNode = outerCurrentNode->next;
-    }
-}
-
 void writeListToFile(LinkedList* headerList, LinkedList* dataList, FILE* file)
 {
     Node* headerNode;
@@ -289,7 +242,6 @@ void writeListToFile(LinkedList* headerList, LinkedList* dataList, FILE* file)
 
     Node *dataNode, *innerDataNode;
     LinkedList *innerList;
-    void *value;
 
     /* First loop through the header to create header line */
     headerNode = headerList->head;

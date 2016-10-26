@@ -168,6 +168,8 @@ void* findIndex(LinkedList* linkedList, int index)
     {
         count = 0;
         node = linkedList->head;
+
+        /* Loop through linkedList until reach index */
         while (count < index)
         {
             node = node->next;
@@ -184,13 +186,15 @@ void* findIndex(LinkedList* linkedList, int index)
  * EXPORT: None
  * Swaps two nodes at i1 and i2
  */
-void swapNodesByIndex(LinkedList* linkedList, int i1, int id2)
+void swapNodesByIndex(LinkedList* linkedList, int i1, int i2)
 {
     Node *node1, *node2;
 
+    /* Get the two ndoes to swap */
     node1 = getNodeAtIndex(linkedList, i1);
     node2 = getNodeAtIndex(linkedList, i2);
 
+    /* Swap the two nodes */
     swapNodes(node1, node2);
 
 }

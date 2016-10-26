@@ -18,13 +18,14 @@ static void validateStringData(char*, LinkedList*);
 
 /**
  * SUBMODULE: parseCSV
- * IMPORT: FILE* inFile, LinkedList* dataList, LinkedList* headerList
- * EXPORT: int
+ * IMPORT: inFile, dataList, headerList
+ * EXPORT: success
  * Parses CSV file defined by assignment guidelines
  */
 int parseCSV(FILE* inFile, LinkedList** outerDataList, LinkedList** headerList)
 {
     int headerParseSuccess = TRUE, dataParseSuccess = TRUE;
+    int success = FALSE;
     int endOfFile = FALSE;
 
     char* line = NULL;
@@ -60,7 +61,8 @@ int parseCSV(FILE* inFile, LinkedList** outerDataList, LinkedList** headerList)
         freeOuterLinkedList(*outerDataList);
     }
 
-    return headerParseSuccess && dataParseSuccess;
+    success = headerParseSuccess && dataParseSuccess;
+    return success;
 }
 
 /**
@@ -173,7 +175,7 @@ int parseDataLine(char* line, LinkedList* outerDataList, LinkedList* headerList)
 {
     int success = TRUE;
 
-    LinkedList* dataList = createLinkedList();
+    LinkedList* innerList = createLinkedList();
 
     Node* currentHeader = headerList->head;
     HeaderInfo* headerInfo;
@@ -190,7 +192,7 @@ int parseDataLine(char* line, LinkedList* outerDataList, LinkedList* headerList)
             if (strcmp(headerInfo->type, "string") == 0)
             {
                 /* String is already valid, just copy string */
-                validateStringData(token, dataList);
+                validateStringData(token, innerList);
             }
             else if (strcmp(headerInfo->type, "integer") == 0)
             {
@@ -198,11 +200,11 @@ int parseDataLine(char* line, LinkedList* outerDataList, LinkedList* headerList)
                 /* Check type of string or empty int */
                 if (strcmp(token, " ") == 0)
                 {
-                    insertLast(dataList, NULL);
+                    insertLast(innerList, NULL);
                 }
                 else
                 {
-                    success = validateIntData(token, dataList);
+                    success = validateIntData(token, innerList);
                 }
             }
             else
@@ -227,11 +229,11 @@ int parseDataLine(char* line, LinkedList* outerDataList, LinkedList* headerList)
 
     if (success)
     {
-        insertLast(outerDataList, dataList);
+        insertLast(outerDataList, innerList);
     }
     else
     {
-        freeLinkedList(dataList);
+        freeLinkedList(innerList);
     }
 
     return success;
@@ -249,9 +251,13 @@ int validateIntData(char* token, LinkedList* dataList)
     int success = FALSE;
     int* intValue;
 
+    /* Allocate memory to int for handling freeing of linked list */
     intValue = (int*) malloc(sizeof(int));
+
+    /* Check that token contains int value */
     if (sscanf(token, "%d", intValue) == 1)
     {
+        /* Insert int into linkedList */
         insertLast(dataList, intValue);
         success = TRUE;
     }
@@ -283,6 +289,12 @@ void validateStringData(char* token, LinkedList* dataList)
     insertLast(dataList, strValue);
 }
 
+/*
+ * SUBMODULE: freeOuterLinkedList
+ * IMPORT: linkedList
+ * EXPORT: None
+ * Frees linked list of linked lists
+ */
 void freeOuterLinkedList(LinkedList* linkedList)
 {
     Node *outerNode, *outerNextNode;
