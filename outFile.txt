@@ -2,6 +2,6 @@ test (integer), test2 (string), test3 (string)
 1, f, a
 2, e, b
 3, d, c
-4, c, d
-5, b, e
-6, a, f
+ , c, d
+5, b,
+ , , 

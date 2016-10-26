@@ -1,7 +1,7 @@
 test (integer), test2 (string), test3 (string)
-6, a, f
-5, b, e
-4, c, d
+ , , 
+5, b,
+ , c, d
 3, d, c
 2, e, b
 1, f, a

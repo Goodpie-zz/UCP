@@ -1,9 +1,20 @@
+/**
+* FILE:        linkedlist.h
+* AUTHOR:      Brandyn Britton
+* USERNAME:    18265716
+* UNIT:        UCP
+* PURPOSE:     UCP Assignment 2016 Semester 2
+* COMMENTS:    Header file for linkedlist.c
+*/
+
+/* Struct defining the structure of a node for linked list */
 typedef struct Node {
 	void* value;
 	struct Node* next;
 	struct Node* prev;
 } Node;
 
+/* Struct defining the structure of a linked list */
 typedef struct {
 	Node* head;
 	Node* tail;
@@ -50,18 +61,28 @@ Node* removeFirst(LinkedList*);
  */
 Node* removeLast(LinkedList*);
 
-/**
+/*
  * SUBMODULE: findIndex
- * IMPORT: linkedList, index
- * EXPORT: node
- * Gets Node at index from linkedList
+ * IMPORT: LinkedList*, int
+ * EXPORT: None
+ * Finds the value stored at index of LinkedList
  */
- /* TODO: rebrand */
 void* findIndex(LinkedList*, int);
 
-/* TODO: Add comments */
+/*
+ * SUBMODULE: swapNodes
+ * IMPORT: Node*, Node*
+ * EXPORT: None
+ * Swaps the position of two Nodes
+ */
 void swapNodes(Node*, Node*);
 
+/*
+ * SUBMODULE: swapNodesByIndex
+ * IMPORT: LinkedList, int, int
+ * EXPORT: None
+ * Swaps two nodes at given indexes
+ */
 void swapNodesByIndex(LinkedList*, int, int);
 
 /**

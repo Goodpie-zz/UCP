@@ -1,7 +1,18 @@
+/**
+* FILE:        linkedlist.c
+* AUTHOR:      Brandyn Britton
+* USERNAME:    18265716
+* UNIT:        UCP
+* PURPOSE:     UCP Assignment 2016 Semester 2
+* COMMENTS:    Provide functionality to the  data type Linked List
+*/
+
 #include <stdlib.h>
-#include <stdio.h>
 
 #include "linkedlist.h"
+
+/* Static functions that are only required within this file context */
+static Node* getNodeAtIndex(LinkedList*, int);
 
 /**
  * SUBMODULE: createLinkedList
@@ -167,34 +178,50 @@ void* findIndex(LinkedList* linkedList, int index)
     return node->value;
 }
 
-void swapNodesByIndex(LinkedList* linkedList, int i1, int i2)
+/*
+ * SUBMODULE: swapNodesByIndex
+ * IMPORT: linkedList
+ * EXPORT: linkedList, i1, i2
+ * Swaps two nodes at i1 and i2
+ */
+void swapNodesByIndex(LinkedList* linkedList, int i1, int id2)
 {
     Node *node1, *node2;
-    int count = 0;
 
-    if ((i1 < linkedList->size) && (i1 >= 0))
-    {
-        node1 = linkedList->head;
-        while (count < i1)
-        {
-            node1 = node1->next;
-            count ++;
-        }
-    }
-
-    count = 0;
-    if ((i2 < linkedList->size) && (i2 >= 0))
-    {
-        node2 = linkedList->head;
-        while (count < i2)
-        {
-            node2 = node2->next;
-            count ++;
-        }
-    }
+    node1 = getNodeAtIndex(linkedList, i1);
+    node2 = getNodeAtIndex(linkedList, i2);
 
     swapNodes(node1, node2);
 
+}
+
+/*
+ * SUBMODULE: getNodeAtIndex
+ * IMPORT: linkedList, index
+ * EXPORT: node
+ * Searches for a node at given index within linkedList. Return NULL if not
+ * found
+ */
+Node* getNodeAtIndex(LinkedList* linkedList, int index)
+{
+    int count = 0;
+    Node* node = NULL;
+
+    /* Ensure index is within range */
+    if ((index < linkedList->size) && (index >= 0))
+    {
+        /* Initial value of node */
+        node = linkedList->head;
+
+        /* Loop through linkedList until reach index */
+        while (count < index)
+        {
+            node = node->next;
+            count ++;
+        }
+    }
+
+    return node;
 }
 
 /**
@@ -208,13 +235,18 @@ int linkedListIsEmpty(LinkedList* linkedList)
     return linkedList->size == 0;
 }
 
+/*
+ * SUBMODULE: swapNodes
+ * IMPORT: node1, node2
+ * EXPORT: None
+ * Swaps the position of two Nodes
+ */
 void swapNodes(Node* node1, Node* node2)
 {
     void* tmp = node1->value;
     node1->value = node2->value;
     node2->value = tmp;
 }
-
 
 /**
  * SUBMODULE: freeLinkedList
