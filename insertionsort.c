@@ -9,6 +9,12 @@
 static int sortByInt(int*, int*, int);
 static int sortByString(char*, char*, int);
 
+/**
+ * SUBMODULE: sortList
+ * IMPORT: dataList, header, order
+ * EXPORT: None
+ * Sorts list using user parameters 
+ */
 void sortList(LinkedList* dataList, HeaderInfo* header, int order)
 {
     int i, j;
