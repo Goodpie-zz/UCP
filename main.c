@@ -1,11 +1,11 @@
- /**
- * FILE:        main.c
- * AUTHOR:      Brandyn Britton
- * USERNAME:    18265716
- * UNIT:        UCP
- * PURPOSE:
- * COMMENTS:
- */
+/**
+* FILE:          main.c
+* AUTHOR:        Brandyn Britton
+* USERNAME:      18265716
+* UNIT:          UCP
+* PURPOSE:       UCP Assignment 2016 Semester 2
+* COMMENTS:      Controls the main flow of the proram  
+*/
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -53,11 +53,18 @@ int main(int argc, char* argv[])
         {
             if (parseCSV(inFile, &dataList, &headerList))
             {
+                /* Get user input on sorting options */
                 sortOption = displayMenu(headerList);
                 sortOrder = displayOrderMenu();
+
+                /* Get the header to sort the data by and then sort */
                 sortHeader = (HeaderInfo*) findIndex(headerList, sortOption);
                 sortList(dataList, sortHeader, sortOrder);
+
+                /* Save file to output file */
                 writeListToFile(headerList, dataList, outFile);
+
+                /* Free the data */
                 freeOuterLinkedList(dataList);
                 freeHeaderLinkedList(headerList);
             }
@@ -66,6 +73,7 @@ int main(int argc, char* argv[])
                 printf("Exiting: invalid CSV file\n");
             }
 
+            /* Operations finished, close files */
             fclose(inFile);
             fclose(outFile);
         }
@@ -79,10 +87,16 @@ int main(int argc, char* argv[])
     return 0;
 }
 
+/**
+ * SUBMODULE: openIOFiles
+ * IMPORT: inFile, outFile, inFileName, outFileName
+ * EXPORT: validFiles
+ * Opens both inpu and output files 
+ */
 int openIOFiles(FILE** inFile, FILE** outFile, char* inFileName, char* outFileName)
 {
     /* Flags for invalid files */
-    int validInFile, validOutFile;
+    int validFiles, validInFile, validOutFile;
 
     /* Check IO files for errors */
     validInFile = openFile(inFile, inFileName, "r");
@@ -98,7 +112,9 @@ int openIOFiles(FILE** inFile, FILE** outFile, char* inFileName, char* outFileNa
         fclose(*inFile);
     }
 
-    return validInFile && validOutFile;
+    validFiles = validInFile && validOutFile;
+
+    return validFiles;
 }
 
 /**
