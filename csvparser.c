@@ -1,6 +1,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
+#include <ctype.h>
+
 
 #include "csvparser.h"
 #include "filereader.h"
@@ -37,6 +39,7 @@ int parseCSV(FILE* inFile, LinkedList** outerDataList, LinkedList** headerList)
     /* First parse header information */
     line = readLine(inFile, &endOfFile);
     headerParseSuccess = parseHeaderLine(line, *headerList);
+    free(line);
 
     /* Loop through rest of file to parse each line */
     if (headerParseSuccess)
@@ -45,6 +48,7 @@ int parseCSV(FILE* inFile, LinkedList** outerDataList, LinkedList** headerList)
         {
             line = readLine(inFile, &endOfFile);
             dataParseSuccess = parseDataLine(line, *outerDataList, *headerList);
+            free(line);
         }
 
         if (!dataParseSuccess)
@@ -225,7 +229,7 @@ int parseDataLine(char* line, LinkedList* outerDataList, LinkedList* headerList)
         currentHeader = currentHeader->next;
     }
 
-    free(line);
+    
 
     if (success)
     {
