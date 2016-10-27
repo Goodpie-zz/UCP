@@ -4,7 +4,7 @@
 * USERNAME:     18265716
 * UNIT:         UCP
 * PURPOSE:      UCP Assignment 2016 Semester 2
-* COMMENTS:     Handles the insertion sort of the csv file data   
+* COMMENTS:     Handles the insertion sort of the csv file data
 */
 #include <stdlib.h>
 #include <string.h>
@@ -21,7 +21,7 @@ static int sortByString(char*, char*, int);
  * SUBMODULE: sortList
  * IMPORT: dataList, header, order
  * EXPORT: None
- * Sorts list using user parameters 
+ * Sorts list using user parameters
  */
 void sortList(LinkedList* dataList, HeaderInfo* header, int order)
 {
@@ -76,7 +76,7 @@ void sortList(LinkedList* dataList, HeaderInfo* header, int order)
  * SUBMODULE: sortByInt
  * IMPORT: current, prev, order
  * EXPORT: posFound
- * Compares two ints and ensures that they are in the 
+ * Compares two ints and ensures that they are in the
  * currect position
  */
 int sortByInt(int* current, int* prev, int order)
@@ -118,7 +118,7 @@ int sortByInt(int* current, int* prev, int order)
  * SUBMODULE: sortByString
  * IMPORT: current, prev, order
  * EXPORT: posFound
- * Compares two strings and ensures that they are in the 
+ * Compares two strings and ensures that they are in the
  * currect position
  */
 int sortByString(char* current, char* prev, int order)
@@ -148,6 +148,7 @@ int sortByString(char* current, char* prev, int order)
         {
             if (strcmp(current, prev) > 0)
             {
+
                 posFound = FALSE;
             }
         }

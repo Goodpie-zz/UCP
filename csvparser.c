@@ -5,7 +5,7 @@
 * UNIT:          UCP
 * PURPOSE:       UCP Assignment 2016 Semester 2
 * COMMENTS:      handles the parsing of the CSV file in the format defined
-*                by Assignment guidelines  
+*                by Assignment guidelines
 */
 #include <stdlib.h>
 #include <string.h>
@@ -26,6 +26,7 @@ static int validateType(char*);
 static int parseDataLine(char*, LinkedList*, LinkedList*);
 static int validateIntData(char*, LinkedList*);
 static void validateStringData(char*, LinkedList*);
+static int is_empty(const char*);
 
 /**
  * SUBMODULE: parseCSV
@@ -55,7 +56,11 @@ int parseCSV(FILE* inFile, LinkedList** outerDataList, LinkedList** headerList)
         while ((!endOfFile) && (dataParseSuccess))
         {
             line = readLine(inFile, &endOfFile);
-            dataParseSuccess = parseDataLine(line, *outerDataList, *headerList);
+            if (!is_empty(line))
+            {
+                printf("meme\n");
+                dataParseSuccess = parseDataLine(line, *outerDataList, *headerList);
+            }
             free(line);
         }
 
@@ -199,6 +204,8 @@ int parseDataLine(char* line, LinkedList* outerDataList, LinkedList* headerList)
 {
     int success = TRUE;
 
+    int dataCount = 0;
+
     LinkedList* innerList = createLinkedList();
 
     Node* currentHeader = headerList->head;
@@ -237,6 +244,9 @@ int parseDataLine(char* line, LinkedList* outerDataList, LinkedList* headerList)
                 success = FALSE;
             }
 
+            dataCount += 1;
+            currentHeader = currentHeader->next;
+
             /* Next token */
             token = strtok(NULL, ",");
         }
@@ -246,14 +256,22 @@ int parseDataLine(char* line, LinkedList* outerDataList, LinkedList* headerList)
             printf("Invalid CSV file format");
             success = FALSE;
         }
-        currentHeader = currentHeader->next;
+
     }
 
-    
+
 
     if (success)
     {
-        insertLast(outerDataList, innerList);
+        if (dataCount != headerList->size)
+        {
+            printf("Invalid amount of columns in CSV file\n");
+            success = FALSE;
+        }
+        else
+        {
+            insertLast(outerDataList, innerList);
+        }
     }
     else
     {
@@ -311,6 +329,15 @@ void validateStringData(char* token, LinkedList* dataList)
 
     /* Insert into the last element of the linked list */
     insertLast(dataList, strValue);
+}
+
+int is_empty(const char *s) {
+  while (*s != '\0') {
+    if (!isspace(*s))
+      return 0;
+    s++;
+  }
+  return 1;
 }
 
 /*

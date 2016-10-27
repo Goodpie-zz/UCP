@@ -1,1 +1,5 @@
-eme (string)
+name (string), description (string), lat (integer), long (integer)
+meme, cold and windy, 21, 21
+
+
+ice, warm and sunny, 211, 1211
