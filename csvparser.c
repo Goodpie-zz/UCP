@@ -58,7 +58,7 @@ int parseCSV(FILE* inFile, LinkedList** outerDataList, LinkedList** headerList)
             line = readLine(inFile, &endOfFile);
             if (!is_empty(line))
             {
-                printf("meme\n");
+                /* Skip over blank lines */
                 dataParseSuccess = parseDataLine(line, *outerDataList, *headerList);
             }
             free(line);

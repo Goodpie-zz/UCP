@@ -31,16 +31,16 @@ void sortList(LinkedList* dataList, HeaderInfo* header, int order)
     void *curValue, *prevValue;
 
     int index = header->index;
-
+    printf("datalist->size = %d\n", dataList->size);
     /* Loop through outer list and get all inner nodes */
-    for (i = 1; i < dataList->size - 1; i++)
+    for (i = 1; i < dataList->size; i++)
     {
         posFound = FALSE;
         j =  i;
-
         /* Compare current node with previous node if it exists */
         while ((j > 0) && (!posFound))
         {
+            printf("j = %d\n", j);
             /* Get list values from the nodes */
             curList = (LinkedList*) findIndex(dataList, j);
             prevList = (LinkedList*) findIndex(dataList, j - 1);
@@ -51,11 +51,13 @@ void sortList(LinkedList* dataList, HeaderInfo* header, int order)
 
             if (strcmp(header->type, "integer") == 0)
             {
+                printf("Sorting by int \n");
                 /* Values are ints so compare */
                 posFound = sortByInt((int*) curValue, (int*) prevValue, order);
             }
             else
             {
+                printf("Sorting by string \n");
                 /* Values are strings so compare */
                 posFound = sortByString((char*) curValue, (char*) prevValue, order);
             }
@@ -123,7 +125,9 @@ int sortByInt(int* current, int* prev, int order)
  */
 int sortByString(char* current, char* prev, int order)
 {
+
     int posFound = TRUE;
+    printf("Sorting by string \n");
     if (order == ASCENDING)
     {
         if (current == NULL)
