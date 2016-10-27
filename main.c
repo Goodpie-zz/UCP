@@ -19,7 +19,8 @@
 /* Assuming file name can only have a max of 255 chars */
 #define MAX_FILENAME_SIZE 255
 
-void writeListToFile(LinkedList*, LinkedList*, FILE*);
+static void writeHeaderToFile(LinkedList*, FILE*);
+static void writeListToFile(LinkedList*, LinkedList*, FILE*);
 static int openIOFiles(FILE**, FILE**, char*, char*);
 static int validateArguments(int, char**, char*, char*);
 static void usage(char*);
@@ -232,9 +233,47 @@ int getMenuInput(int max)
  */
 void usage(char* error)
 {
-    printf("%s\nCorrect Usage: ./main i <infile> o <outfile>", error);
+    printf("%s\nCorrect Usage: ./main i <infile> o <outfile>\n", error);
 }
 
+/**
+ * SUBMODULE: writeHeaderToFile
+ * IMPORT: headerList, file
+ * EXPORT: None
+ * Writes the file header information to the output file 
+ */
+void writeHeaderToFile(LinkedList* headerList, FILE* file)
+{
+    
+    Node* headerNode;
+    HeaderInfo* header;
+    
+    /* First loop through the header to create header line */
+    headerNode = headerList->head;
+    while (headerNode != NULL)
+    {
+        header = (HeaderInfo*) headerNode->value;
+        fprintf(file, "%s (%s)", header->name, header->type);
+        
+        /* Check if header node is last in heades. If so, add comma for next header */
+        if (headerNode->next != NULL)
+        {
+            fprintf(file, ", ");
+        }
+        
+        headerNode = headerNode->next;
+    }
+    
+    /* Add new line */
+    fprintf(file, "\n");
+}
+
+/**
+ * SUBMODULE: writeListToFile
+ * IMPORT: headerList, dataList, file
+ * EXPORT: None
+ * Writes the ordered list to the output file 
+ */
 void writeListToFile(LinkedList* headerList, LinkedList* dataList, FILE* file)
 {
     Node* headerNode;
@@ -242,21 +281,8 @@ void writeListToFile(LinkedList* headerList, LinkedList* dataList, FILE* file)
 
     Node *dataNode, *innerDataNode;
     LinkedList *innerList;
-
-    /* First loop through the header to create header line */
-    headerNode = headerList->head;
-    while (headerNode != NULL)
-    {
-        header = (HeaderInfo*) headerNode->value;
-        fprintf(file, "%s (%s)", header->name, header->type);
-        if (headerNode->next != NULL)
-        {
-            fprintf(file, "%s ", ",");
-        }
-        headerNode = headerNode->next;
-    }
-
-    fprintf(file, "\n");
+    
+    writeHeaderToFile(headerList, file);
 
     dataNode = dataList->head;
     while (dataNode != NULL)
@@ -264,27 +290,33 @@ void writeListToFile(LinkedList* headerList, LinkedList* dataList, FILE* file)
         headerNode = headerList->head;
         innerList = (LinkedList*) dataNode->value;
         innerDataNode = innerList->head;
-
+        
+        /* Loop through the inner linked list */
         while (innerDataNode != NULL)
         {
             header = (HeaderInfo*) headerNode->value;
+            
+            /* Check type of data */
             if (strcmp(header->type, "string") == 0)
             {
+                /* Data is string so we can just save it to file */
                 fprintf(file, "%s", (char*) innerDataNode->value);
             }
             else if (strcmp(header->type, "integer") == 0)
             {
+                /* Check if integer value is NULL or not */
                 if (innerDataNode->value != NULL)
                 {
                     fprintf(file, " %d", *(int*) innerDataNode->value);
                 }
                 else
                 {
+                    /* NULL value defined by space in CSV file */
                     fprintf(file, " ");
                 }
             }
             
-
+            /* Check if last node and add appropriate line endings */
             if (innerDataNode->next != NULL)
             {
                 fprintf(file, ",");
