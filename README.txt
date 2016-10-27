@@ -30,10 +30,18 @@ None™
 
 Tested on 8DWZF2S in 314.221
 
+## Usage
+
+Compile: $ make
+Clean Objects: $ make clean
+Clean Objects and Exectuables: $ make very-clean
+Usage: main i <inFile> o <outFile>
+
 ## Assumptions Made
 
 * Within the assignment outline, missing values are seperated by a space.
 This format has been assumed when reading the file and outputting.
-* Row headers (name + type) will not exceed more than 4096 characters
+* Column headers (name + type) will not exceed more than 4096 characters
+* No spaces in column headers
 * Files are stored in the same directory as the executable and file names
 do not exceed more than 260 characters to play safe with Windows systems

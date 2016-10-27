@@ -90,6 +90,12 @@ int main(int argc, char* argv[])
     return 0;
 }
 
+/**
+ * SUBMODULE: sort
+ * IMPORT: dataList, headerList
+ * EXPORT: int
+ * Handle the initialization of the sort
+ */
 int sort(LinkedList* dataList, LinkedList* headerList)
 {
     int success = TRUE;
@@ -103,12 +109,15 @@ int sort(LinkedList* dataList, LinkedList* headerList)
 
     if (sortHeader != NULL)
     {
+        /* Check type of data that need sorting */
         if (strcmp(sortHeader->type, "string") == 0)
         {
+            /* Data type is a string so use compareString function */
             sortList(dataList, sortOption, sortOrder, compareString);
         }
         else if (strcmp(sortHeader->type, "integer") == 0)
         {
+            /* Data type is an integer so use compareInt function */
             sortList(dataList, sortOption, sortOrder, compareInt);
         }
     }
@@ -118,7 +127,6 @@ int sort(LinkedList* dataList, LinkedList* headerList)
     }
 
     return success;
-
 }
 
 /**
@@ -232,6 +240,12 @@ int displayMenu(LinkedList* headerList)
     return choice - 1;
 }
 
+/**
+ * SUBMODULE: displayOrderMenu
+ * IMPORT: None
+ * EXPORT: choice
+ * Displays the menu to the user for choosing the order type 
+ */
 int displayOrderMenu()
 {
     int choice = -1;
@@ -248,6 +262,12 @@ int displayOrderMenu()
     return choice - 1;
 }
 
+/**
+ * SUBMODULE: getMenuInput
+ * IMPORT: max
+ * EXPORT: choice
+ * Gets the user choice between 1 and max for menu options
+ */
 int getMenuInput(int max)
 {
     int choice = -1;

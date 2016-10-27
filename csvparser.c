@@ -26,7 +26,7 @@ static int validateType(char*);
 static int parseDataLine(char*, LinkedList*, LinkedList*);
 static int validateIntData(char*, LinkedList*);
 static void validateStringData(char*, LinkedList*);
-static int is_empty(const char*);
+static int stringIsEmpty(const char*);
 
 /**
  * SUBMODULE: parseCSV
@@ -48,7 +48,11 @@ int parseCSV(FILE* inFile, LinkedList** outerDataList, LinkedList** headerList)
 
     /* First parse header information */
     line = readLine(inFile, &endOfFile);
-    headerParseSuccess = parseHeaderLine(line, *headerList);
+    if (!stringIsEmpty(line))
+    {
+        headerParseSuccess = parseHeaderLine(line, *headerList);
+    }
+    free(line);
 
     /* Loop through rest of file to parse each line */
     if (headerParseSuccess)
@@ -56,7 +60,7 @@ int parseCSV(FILE* inFile, LinkedList** outerDataList, LinkedList** headerList)
         while ((!endOfFile) && (dataParseSuccess))
         {
             line = readLine(inFile, &endOfFile);
-            if (!is_empty(line))
+            if (!stringIsEmpty(line))
             {
                 /* Skip over blank lines */
                 dataParseSuccess = parseDataLine(line, *outerDataList, *headerList);
@@ -111,9 +115,6 @@ int parseHeaderLine(char* line, LinkedList* headerList)
             token = strtok(NULL, ",");
         }
     }
-
-    /* No longer need line, free it */
-    free(line);
 
     if (linkedListIsEmpty(headerList))
     {
@@ -263,6 +264,7 @@ int parseDataLine(char* line, LinkedList* outerDataList, LinkedList* headerList)
 
     if (success)
     {
+        /* Check that the amount of columns read is the same as the amount of column headers */
         if (dataCount != headerList->size)
         {
             printf("Invalid amount of columns in CSV file\n");
@@ -270,11 +272,13 @@ int parseDataLine(char* line, LinkedList* outerDataList, LinkedList* headerList)
         }
         else
         {
+            /* Success. Add to outerDataList */
             insertLast(outerDataList, innerList);
         }
     }
     else
     {
+        /* Failed so free linked list */
         freeLinkedList(innerList);
     }
 
@@ -331,13 +335,26 @@ void validateStringData(char* token, LinkedList* dataList)
     insertLast(dataList, strValue);
 }
 
-int is_empty(const char *s) {
-  while (*s != '\0') {
-    if (!isspace(*s))
-      return 0;
-    s++;
-  }
-  return 1;
+/**
+ * SUBMODULE: stringIsEmpty
+ * IMPORT: line
+ * EXPORT: isEmpty
+ * Loop through characters in line and checks if only white space 
+ */
+int stringIsEmpty(const char *line) {
+    int isEmpty = TRUE;
+
+    /* Loop through the characters in the line and check if is only white space */
+    while ((*line != '\0') && (isEmpty == TRUE)) 
+    {
+        if (!isspace(*line))
+        {
+            isEmpty = FALSE;
+        }
+
+        line++;
+    }
+    return isEmpty;
 }
 
 /*
