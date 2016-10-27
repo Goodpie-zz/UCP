@@ -34,5 +34,6 @@ None™
 * Within the assignment outline, missing values are seperated by a space.
 This format has been assumed when reading the file and outputting.
 * Row headers (name + type) will not exceed more than 4096 characters
+* No blank lines in CSV file
 * Files are stored in the same directory as the executable and file names
 do not exceed more than 260 characters to play safe with Windows systems

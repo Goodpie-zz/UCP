@@ -1,10 +1,18 @@
+/**
+* FILE:         headerinfo.c
+* AUTHOR:       Brandyn Britton
+* USERNAME:     18265716
+* UNIT:         UCP
+* PURPOSE:      UCP Assignment 2016 Semester 2
+* COMMENTS:     Handles operations on HeaderInfo data
+*/
 #include <stdlib.h>
 
 #include "headerinfo.h"
 
 /**
  * SUBMODULE: freeHeaderLinkedList
- * IMPORT: LinkedList*
+ * IMPORT: linkedList
  * EXPORT: None
  * Handles specific case of freeing header list containing HeaderInfo struct
  */
@@ -42,7 +50,8 @@ void freeHeaderLinkedList(LinkedList* linkedList)
 
 /**
  * SUBMODULE: freeHeader
- * IMPORT: HeaderInfo* EXPORT: None
+ * IMPORT: header 
+ * EXPORT: None
  * Handles freeing a HeaderInfo struct pointer
  */
 void freeHeader(HeaderInfo* header)

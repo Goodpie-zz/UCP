@@ -1,3 +1,12 @@
+/**
+* FILE:          csvparser.c
+* AUTHOR:        Brandyn Britton
+* USERNAME:      18265716
+* UNIT:          UCP
+* PURPOSE:       UCP Assignment 2016 Semester 2
+* COMMENTS:      handles the parsing of the CSV file in the format defined
+*                by Assignment guidelines  
+*/
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
@@ -39,7 +48,6 @@ int parseCSV(FILE* inFile, LinkedList** outerDataList, LinkedList** headerList)
     /* First parse header information */
     line = readLine(inFile, &endOfFile);
     headerParseSuccess = parseHeaderLine(line, *headerList);
-    free(line);
 
     /* Loop through rest of file to parse each line */
     if (headerParseSuccess)
@@ -53,14 +61,16 @@ int parseCSV(FILE* inFile, LinkedList** outerDataList, LinkedList** headerList)
 
         if (!dataParseSuccess)
         {
-            printf("Failed to read in data from CSV file. Invalid format\n");
+            /* Failed. pritn out error and free data */
+            printf("Failed to read in CSV file due to invalid data format\n");
             freeHeaderLinkedList(*headerList);
             freeOuterLinkedList(*outerDataList);
         }
     }
     else
     {
-        printf("Failed to read header file\n");
+        /* Failed to read header information so print out error and free data */
+        printf("Invalid row headers defined in CSV file\n");
         freeHeaderLinkedList(*headerList);
         freeOuterLinkedList(*outerDataList);
     }
@@ -79,21 +89,31 @@ int parseHeaderLine(char* line, LinkedList* headerList)
 {
     int success = TRUE;
     int index = 0;
+    char* token;
 
-    /* Tokenize line and validate each token */
-    char* token = strtok(line, ",");
-    while ((token != NULL) && (success == TRUE))
+    /* Ensure string isn't empty */
+    if (strlen(line) != 0)
     {
-        /* Validate and add to linked list */
-        success = validateHeader(token, headerList, index);
-        index += 1;
+        /* Tokenize line and validate each token */
+        token = strtok(line, ",");
+        while ((token != NULL) && (success == TRUE))
+        {
+            /* Validate and add to linked list */
+            success = validateHeader(token, headerList, index);
+            index += 1;
 
-        /* Next token */
-        token = strtok(NULL, ",");
+            /* Next token */
+            token = strtok(NULL, ",");
+        }
     }
 
     /* No longer need line, free it */
     free(line);
+
+    if (linkedListIsEmpty(headerList))
+    {
+        success = FALSE;
+    }
 
     return success;
 }
@@ -174,7 +194,7 @@ int validateType(char* type)
  * EXPORT: int success
  * Validates the data line and adds it to out linked list
  */
- /* TODO: Shorten this function and increase cohesion */
+ /* TODO: Shorten this function */
 int parseDataLine(char* line, LinkedList* outerDataList, LinkedList* headerList)
 {
     int success = TRUE;

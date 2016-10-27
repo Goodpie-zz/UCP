@@ -1,3 +1,12 @@
+/**
+* FILE:         filereader.c
+* AUTHOR:       Brandyn Britton
+* USERNAME:     18265716
+* UNIT:         UCP
+* PURPOSE:      UCP Assignment 2016 Semester 2
+* COMMENTS:     Handles basic file reading operations
+*/
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -5,10 +14,11 @@
 #include "boolean.h"
 
 #define LINE_LENGTH 4096
+
 /**
- *  SUBMODULE:  openFile
- *  IMPORT:     FILE**, char*, char*
- *  EXPORT:     int
+ *  SUBMODULE: openFile
+ *  IMPORT: file, filename, mode
+ *  EXPORT: success
  *  Attempts to open file and returns true on success
  */
 int openFile(FILE** file, char* filename, char* mode)
@@ -38,9 +48,9 @@ int openFile(FILE** file, char* filename, char* mode)
 }
 
 /**
- *  SUBMODULE:  readLine
- *  IMPORTS:    FILE*
- *  EXPORTS:    int
+ *  SUBMODULE: readLine
+ *  IMPORTS: file, endOfFile
+ *  EXPORTS: char*
  *  Reads line of unknown size from file and returns true if EOF
  */
 char* readLine(FILE* file, int* endOfFile)

@@ -1,3 +1,12 @@
+/**
+* FILE:         csvparser.h
+* AUTHOR:       Brandyn Britton
+* USERNAME:     18265716
+* UNIT:         UCP
+* PURPOSE:      UCP Assignment 2016 Semester 2
+* COMMENTS:     Headerfile for csvparser.c
+*/
+
 #ifndef LINKEDLIST_H
     #define LINKEDLIST_H
     #include "linkedlist.h"
