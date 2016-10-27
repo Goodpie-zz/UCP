@@ -1,6 +1,6 @@
 name (string), description (string), lat (integer), long (integer)
-meme, cold and windy, 21, 21
-ice, warm and sunny, 211, 1211
-Perth, Hot and Windy, 213, 5423
 Canberra, Cold and Boring, 1243, 324
 Melbourne, Proper Moist, 65432, 32132
+Perth, Hot and Windy, 213, 5423
+ice, warm and sunny, 211, 1211
+meme, cold and windy, 21, 21

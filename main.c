@@ -40,9 +40,8 @@ int main(int argc, char* argv[])
 {
     FILE *inFile = NULL, *outFile = NULL;
     int validFiles;
-    int sortOption, sortOrder;
+    int success;
     char inFileName[MAX_FILENAME_SIZE], outFileName[MAX_FILENAME_SIZE];
-    HeaderInfo* sortHeader;
 
     LinkedList* dataList = NULL;
     LinkedList* headerList = NULL;
@@ -55,7 +54,15 @@ int main(int argc, char* argv[])
             if (parseCSV(inFile, &dataList, &headerList))
             {
 
-                sort(dataList, headerList);
+                success = sort(dataList, headerList);
+                if (success)
+                {
+                    printf("Succesfully sorted and stored in %s\n", outFileName);
+                }
+                else
+                {
+                    printf("Failed to sort data\n");
+                }
 
                 /* Save file to output file */
                 writeListToFile(headerList, dataList, outFile);
@@ -85,16 +92,14 @@ int main(int argc, char* argv[])
 
 int sort(LinkedList* dataList, LinkedList* headerList)
 {
-    int success = FALSE;
+    int success = TRUE;
     int sortOption, sortOrder;
-    int index;
     HeaderInfo* sortHeader;
 
     sortOption = displayMenu(headerList);
     sortOrder = displayOrderMenu();
 
     sortHeader = (HeaderInfo*) findIndex(headerList, sortOption);
-    index = sortHeader->index;
 
     if (sortHeader != NULL)
     {
@@ -106,6 +111,10 @@ int sort(LinkedList* dataList, LinkedList* headerList)
         {
             sortList(dataList, sortOption, sortOrder, compareInt);
         }
+    }
+    else
+    {
+        success = FALSE;
     }
 
     return success;

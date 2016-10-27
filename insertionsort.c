@@ -30,7 +30,6 @@ void sortList(LinkedList* dataList, int index, int order, int (*compare)(void*, 
     LinkedList *curList, *prevList;
     void *curValue, *prevValue;
 
-    printf("index = %d\n", index);
     /* Loop through outer list and get all inner nodes */
     for (i = 1; i < dataList->size; i++)
     {
@@ -47,10 +46,11 @@ void sortList(LinkedList* dataList, int index, int order, int (*compare)(void*, 
             curValue = findIndex(curList, index);
             prevValue = findIndex(prevList, index);
 
+            /* Check if current is larger than previous */
             isLarger = compare(curValue, prevValue);
 
+            /* Check if in correct position */
             posFound = checkPositionFound(isLarger, order);
-            printf("posFound = %d\n", posFound);
 
             if (posFound == FALSE)
             {
@@ -64,32 +64,50 @@ void sortList(LinkedList* dataList, int index, int order, int (*compare)(void*, 
     }
 }
 
+/**
+ * SUBMODULE: checkPositionFound
+ * IMPORT: isLarger, order
+ * EXPORT: isLarger
+ * Checks if the two items are in the correct position 
+ */
 int checkPositionFound(int isLarger, int order)
 {
     int positionFound = FALSE;
-    if (order == ASCENDING)
+
+    if (order == DESCENDING)
     {
+        /* Order large -> small */
         if (isLarger == FALSE)
         {
+            /* Values in correct position */
             positionFound = TRUE;
         }
     }
-    else if (order == DESCENDING)
+    else if (order == ASCENDING)
     {
+        /* Order small -> large */
         if (isLarger == TRUE)
         {
+            /* Values in correct position */
             positionFound = TRUE;
         }
     }
 
     return positionFound;
 }
-
+ 
+/**
+ * SUBMODULE: compareInt
+ * IMPORT: currnet, previous
+ * EXPORT: isLarger
+ * Compares two integers and checks if current is larger than previous
+ */
 int compareInt(void* current, void* previous)
 {
     int *curValue = NULL, *prevValue = NULL;
     int isLarger = FALSE;
 
+    /* Extract values from NULL pointer */
     curValue = (int*) current;
     prevValue = (int*) previous;
 
@@ -113,6 +131,12 @@ int compareInt(void* current, void* previous)
     return isLarger;
 }
 
+/**
+ * SUBMODULE: compareString
+ * IMPORT: current, previous
+ * EXPORT: isLarger
+ * Comapres two sets of strings and check which is larger
+ */
 int compareString(void* current, void* previous)
 {
     char *curValue= NULL, *prevValue = NULL;
@@ -126,7 +150,6 @@ int compareString(void* current, void* previous)
         /* NULL < NOT NULL */
         if (curValue != NULL)
         {
-            printf("NOT NULL > NULL\n");
             isLarger = TRUE;
         }
     }
@@ -134,14 +157,11 @@ int compareString(void* current, void* previous)
     {
         if (curValue != NULL)
         {
-            printf("%s > %s = ", curValue, prevValue);
             /* Compare two int values */
             isLarger = strcmp(curValue, prevValue) > 0;
 
         }
     }
-
-    printf("%d\n", isLarger);
 
     return isLarger;
 }

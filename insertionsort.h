@@ -24,6 +24,18 @@
  */
 void sortList(LinkedList*, int, int, int (*compare)(void*, void*));
 
+/**
+ * SUBMODULE: compareString
+ * IMPORT: void*, void*
+ * EXPORT: int
+ * Comapres two sets of strings and check which is larger
+ */
 int compareString(void*, void*);
 
+/**
+ * SUBMODULE: compareInt
+ * IMPORT: void*, void*
+ * EXPORT: int
+ * Compares two integers and checks if current is larger than previous
+ */
 int compareInt(void*, void*);
