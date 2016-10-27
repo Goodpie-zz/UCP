@@ -22,4 +22,8 @@
  * EXPORT: None
  * Sorts list using user parameters 
  */
-void sortList(LinkedList*, HeaderInfo*, int);
+void sortList(LinkedList*, int, int, int (*compare)(void*, void*));
+
+int compareString(void*, void*);
+
+int compareInt(void*, void*);

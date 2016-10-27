@@ -27,6 +27,7 @@ static void usage(char*);
 static int displayMenu(LinkedList*);
 static int displayOrderMenu();
 static int getMenuInput(int max);
+static int sort(LinkedList*, LinkedList*);
 
 /**
  * SUBMODULE: main
@@ -53,13 +54,8 @@ int main(int argc, char* argv[])
         {
             if (parseCSV(inFile, &dataList, &headerList))
             {
-                /* Get user input on sorting options */
-                sortOption = displayMenu(headerList);
-                sortOrder = displayOrderMenu();
 
-                /* Get the header to sort the data by and then sort */
-                sortHeader = (HeaderInfo*) findIndex(headerList, sortOption);
-                sortList(dataList, sortHeader, sortOrder);
+                sort(dataList, headerList);
 
                 /* Save file to output file */
                 writeListToFile(headerList, dataList, outFile);
@@ -85,6 +81,35 @@ int main(int argc, char* argv[])
     }
 
     return 0;
+}
+
+int sort(LinkedList* dataList, LinkedList* headerList)
+{
+    int success = FALSE;
+    int sortOption, sortOrder;
+    int index;
+    HeaderInfo* sortHeader;
+
+    sortOption = displayMenu(headerList);
+    sortOrder = displayOrderMenu();
+
+    sortHeader = (HeaderInfo*) findIndex(headerList, sortOption);
+    index = sortHeader->index;
+
+    if (sortHeader != NULL)
+    {
+        if (strcmp(sortHeader->type, "string") == 0)
+        {
+            sortList(dataList, sortOption, sortOrder, compareString);
+        }
+        else if (strcmp(sortHeader->type, "integer") == 0)
+        {
+            sortList(dataList, sortOption, sortOrder, compareInt);
+        }
+    }
+
+    return success;
+
 }
 
 /**

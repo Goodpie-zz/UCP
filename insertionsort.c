@@ -14,8 +14,7 @@
 #include "insertionsort.h"
 #include "boolean.h"
 
-static int sortByInt(int*, int*, int);
-static int sortByString(char*, char*, int);
+static int checkPositionFound(int, int);
 
 /**
  * SUBMODULE: sortList
@@ -23,15 +22,15 @@ static int sortByString(char*, char*, int);
  * EXPORT: None
  * Sorts list using user parameters
  */
-void sortList(LinkedList* dataList, HeaderInfo* header, int order)
+void sortList(LinkedList* dataList, int index, int order, int (*compare)(void*, void*))
 {
     int i, j;
     int posFound;
+    int isLarger;
     LinkedList *curList, *prevList;
     void *curValue, *prevValue;
 
-    int index = header->index;
-    printf("datalist->size = %d\n", dataList->size);
+    printf("index = %d\n", index);
     /* Loop through outer list and get all inner nodes */
     for (i = 1; i < dataList->size; i++)
     {
@@ -40,7 +39,6 @@ void sortList(LinkedList* dataList, HeaderInfo* header, int order)
         /* Compare current node with previous node if it exists */
         while ((j > 0) && (!posFound))
         {
-            printf("j = %d\n", j);
             /* Get list values from the nodes */
             curList = (LinkedList*) findIndex(dataList, j);
             prevList = (LinkedList*) findIndex(dataList, j - 1);
@@ -49,20 +47,12 @@ void sortList(LinkedList* dataList, HeaderInfo* header, int order)
             curValue = findIndex(curList, index);
             prevValue = findIndex(prevList, index);
 
-            if (strcmp(header->type, "integer") == 0)
-            {
-                printf("Sorting by int \n");
-                /* Values are ints so compare */
-                posFound = sortByInt((int*) curValue, (int*) prevValue, order);
-            }
-            else
-            {
-                printf("Sorting by string \n");
-                /* Values are strings so compare */
-                posFound = sortByString((char*) curValue, (char*) prevValue, order);
-            }
+            isLarger = compare(curValue, prevValue);
 
-            if (!posFound)
+            posFound = checkPositionFound(isLarger, order);
+            printf("posFound = %d\n", posFound);
+
+            if (posFound == FALSE)
             {
                 /* Swap nodes as incorrect position */
                 swapNodesByIndex(dataList, j, j - 1);
@@ -74,89 +64,84 @@ void sortList(LinkedList* dataList, HeaderInfo* header, int order)
     }
 }
 
-/**
- * SUBMODULE: sortByInt
- * IMPORT: current, prev, order
- * EXPORT: posFound
- * Compares two ints and ensures that they are in the
- * currect position
- */
-int sortByInt(int* current, int* prev, int order)
+int checkPositionFound(int isLarger, int order)
 {
-    int posFound = TRUE;
+    int positionFound = FALSE;
     if (order == ASCENDING)
     {
-        if (current == NULL)
+        if (isLarger == FALSE)
         {
-            posFound = FALSE;
-        }
-        else if (prev != NULL)
-        {
-            if (*current < *prev)
-            {
-                posFound = FALSE;
-            }
+            positionFound = TRUE;
         }
     }
-    else
+    else if (order == DESCENDING)
     {
-        if (prev == NULL)
+        if (isLarger == TRUE)
         {
-            posFound = FALSE;
-        }
-        else if (current != NULL)
-        {
-            if (*current > *prev)
-            {
-                posFound = FALSE;
-            }
+            positionFound = TRUE;
         }
     }
 
-    return posFound;
+    return positionFound;
 }
 
-/**
- * SUBMODULE: sortByString
- * IMPORT: current, prev, order
- * EXPORT: posFound
- * Compares two strings and ensures that they are in the
- * currect position
- */
-int sortByString(char* current, char* prev, int order)
+int compareInt(void* current, void* previous)
 {
+    int *curValue = NULL, *prevValue = NULL;
+    int isLarger = FALSE;
 
-    int posFound = TRUE;
-    printf("Sorting by string \n");
-    if (order == ASCENDING)
+    curValue = (int*) current;
+    prevValue = (int*) previous;
+
+    if (prevValue == NULL)
     {
-        if (current == NULL)
+        /* NULL < NOT NULL */
+        if (curValue != NULL)
         {
-            posFound = FALSE;
-        }
-        else if (prev != NULL)
-        {
-            if (strcmp(current, prev) < 0)
-            {
-                posFound = FALSE;
-            }
+            isLarger = TRUE;
         }
     }
     else
     {
-        if (prev == NULL)
+        if (curValue != NULL)
         {
-            posFound = FALSE;
-        }
-        else if (current != NULL)
-        {
-            if (strcmp(current, prev) > 0)
-            {
-
-                posFound = FALSE;
-            }
+            /* Compare two int values */
+            isLarger = (*curValue > *prevValue);
         }
     }
 
-    return posFound;
+    return isLarger;
+}
+
+int compareString(void* current, void* previous)
+{
+    char *curValue= NULL, *prevValue = NULL;
+    int isLarger = FALSE;
+
+    curValue = (char*) current;
+    prevValue = (char*) previous;
+
+    if (prevValue == NULL)
+    {
+        /* NULL < NOT NULL */
+        if (curValue != NULL)
+        {
+            printf("NOT NULL > NULL\n");
+            isLarger = TRUE;
+        }
+    }
+    else
+    {
+        if (curValue != NULL)
+        {
+            printf("%s > %s = ", curValue, prevValue);
+            /* Compare two int values */
+            isLarger = strcmp(curValue, prevValue) > 0;
+
+        }
+    }
+
+    printf("%d\n", isLarger);
+
+    return isLarger;
 }
