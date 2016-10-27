@@ -78,6 +78,7 @@ char* readLine(FILE* file, int* endOfFile)
 
     /* Add string terminator */
     buffer[currentIndex] = '\0';
+    buffer[strcspn(buffer, "\n")] = 0;
 
     return buffer;
 

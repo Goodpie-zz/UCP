@@ -276,18 +276,25 @@ void writeListToFile(LinkedList* headerList, LinkedList* dataList, FILE* file)
             {
                 if (innerDataNode->value != NULL)
                 {
-                    fprintf(file, "%d", *(int*) innerDataNode->value);
+                    fprintf(file, " %d", *(int*) innerDataNode->value);
                 }
                 else
                 {
                     fprintf(file, " ");
                 }
             }
+            
 
             if (innerDataNode->next != NULL)
             {
                 fprintf(file, ",");
             }
+            else
+            {
+                fprintf(file, "\n");
+            }
+            
+            /* Get next nodes */
             innerDataNode = innerDataNode->next;
             headerNode = headerNode->next;
         }

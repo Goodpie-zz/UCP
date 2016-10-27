@@ -1,7 +1,3 @@
-test (integer), test2 (string), test3 (string)
- , ,
-5, b,
- , c, d asdsa asd as asdsa
-3, d, c
-2, e, b
-1, f, a
+loc (string), desc (string), lat (integer), long (integer)
+shark bay, nice and warm, 12543, 34216
+esperance, cold and windy, , 4287
