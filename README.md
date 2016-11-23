@@ -35,8 +35,11 @@ Tested on 8DWZF2S in 314.221
 ## Usage
 
 Compile: $ make
+
 Clean Objects: $ make clean
+
 Clean Objects and Exectuables: $ make very-clean
+
 Usage: main i <inFile> o <outFile>
 
 ## Assumptions Made
